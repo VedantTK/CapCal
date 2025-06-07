@@ -70,8 +70,8 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
       investmentType: "sip",
       monthlyInvestment: undefined,
       lumpsumAmount: undefined,
-      annualReturnRate: 10, // Default 10%
-      timePeriod: 10, // Default 10 years
+      annualReturnRate: 10, 
+      timePeriod: 10, 
     },
   });
 
@@ -88,13 +88,10 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
       const monthlyRate = annualRate / 12;
       const numberOfMonths = years * 12;
       const P = data.monthlyInvestment;
-      // Future Value of SIP: P * {[(1+i)^n - 1]/i} * (1+i) -- assuming investment at start of month
-      // Or P * {[(1+i)^n - 1]/i} -- assuming investment at end of month. Let's use end of month for simplicity.
       totalValue = P * ( (Math.pow(1 + monthlyRate, numberOfMonths) - 1) / monthlyRate );
       investedAmount = P * numberOfMonths;
     } else if (data.investmentType === "lumpsum" && data.lumpsumAmount) {
       const P = data.lumpsumAmount;
-      // Future Value of Lumpsum: P * (1+r)^t
       totalValue = P * Math.pow(1 + annualRate, years);
       investedAmount = P;
     }
@@ -127,7 +124,16 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
                   <FormLabel>Investment Type</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        // Reset other field when type changes to avoid validation errors on stale data
+                        if (value === "sip") {
+                          form.setValue("lumpsumAmount", undefined);
+                        } else {
+                          form.setValue("monthlyInvestment", undefined);
+                        }
+                        setResult(null); // Clear previous results
+                      }}
                       defaultValue={field.value}
                       className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
                     >
@@ -158,7 +164,7 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
                   <FormItem>
                     <FormLabel>Monthly Investment Amount ({currency})</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 5000" {...field} />
+                      <Input type="number" placeholder="e.g., 5000" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +180,7 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
                   <FormItem>
                     <FormLabel>Lumpsum Amount ({currency})</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 100000" {...field} />
+                      <Input type="number" placeholder="e.g., 100000" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -190,7 +196,7 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
                   <FormItem>
                     <FormLabel>Expected Annual Return Rate (%)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 12" {...field} />
+                      <Input type="number" placeholder="e.g., 12" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

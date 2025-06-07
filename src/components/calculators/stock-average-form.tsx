@@ -87,7 +87,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                   <FormItem>
                     <FormLabel>First Buy Price ({currency})</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 100.50" {...field} />
+                      <Input type="number" placeholder="e.g., 100.50" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -100,7 +100,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                   <FormItem>
                     <FormLabel>First Buy Quantity</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 10" {...field} />
+                      <Input type="number" placeholder="e.g., 10" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -115,7 +115,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                   <FormItem>
                     <FormLabel>Second Buy Price ({currency}) (Optional)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 95.25" {...field} />
+                      <Input type="number" placeholder="e.g., 95.25" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,7 +128,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                   <FormItem>
                     <FormLabel>Second Buy Quantity (Optional)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 5" {...field} />
+                      <Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -157,7 +157,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                     <TableBody>
                       <TableRow>
                         <TableCell>Average Purchase Price</TableCell>
-                        <TableCell className="text-right font-semibold">{currency}{result.averagePrice.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-semibold">{currency}{result.averagePrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Quantity</TableCell>
@@ -165,7 +165,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Investment</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalInvestment.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">{currency}{result.totalInvestment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
