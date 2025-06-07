@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { CurrencySelector } from '@/components/currency-selector';
 import { MountainIcon } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function SiteHeader() {
   return (
@@ -10,7 +11,10 @@ export default function SiteHeader() {
           <MountainIcon className="h-6 w-6" />
           <span className="text-lg font-semibold font-headline">Global Invest Pro</span>
         </Link>
-        <CurrencySelector />
+        <div className="flex items-center gap-2">
+          <CurrencySelector />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
