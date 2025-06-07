@@ -13,7 +13,7 @@ interface PlaceholderFormProps {
 }
 
 export default function PlaceholderForm({ calculatorName }: PlaceholderFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -29,7 +29,7 @@ export default function PlaceholderForm({ calculatorName }: PlaceholderFormProps
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="field1">Sample Field 1 ({currency})</Label>
+            <Label htmlFor="field1">Sample Field 1 ({selectedCurrencySymbol})</Label>
             <Input id="field1" type="number" placeholder="Enter value" disabled />
           </div>
           <div>

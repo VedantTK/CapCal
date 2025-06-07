@@ -1,23 +1,58 @@
+
 "use client";
 
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useContext, useState, useMemo } from 'react';
 
-export type Currency = 'USD' | 'EUR' | 'INR' | 'GBP';
+export type CurrencyCode = 
+  | 'USD' | 'EUR' | 'GBP' | 'JPY' | 'CNY' 
+  | 'INR' | 'CHF' | 'RUB' | 'CAD' | 'AUD' | 'SGD';
+
+export const CURRENCY_SYMBOLS: Readonly<Record<CurrencyCode, string>> = {
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  JPY: '¥',
+  CNY: '¥',
+  INR: '₹',
+  CHF: '₣',
+  RUB: '₽',
+  CAD: 'C$',
+  AUD: 'A$',
+  SGD: 'S$',
+};
+
+export const AVAILABLE_CURRENCIES: ReadonlyArray<CurrencyCode> = [
+  'USD', 'EUR', 'GBP', 'JPY', 'CNY', 
+  'INR', 'CHF', 'RUB', 'CAD', 'AUD', 'SGD',
+];
 
 interface CurrencyContextType {
-  currency: Currency;
-  setCurrency: Dispatch<SetStateAction<Currency>>;
-  currencies: Currency[];
+  currencyCode: CurrencyCode;
+  setCurrencyCode: Dispatch<SetStateAction<CurrencyCode>>;
+  availableCurrencies: ReadonlyArray<CurrencyCode>;
+  selectedCurrencySymbol: string;
+  getCurrencyDisplayFormat: (code: CurrencyCode) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>('USD');
-  const currencies: Currency[] = useMemo(() => ['USD', 'EUR', 'INR', 'GBP'], []);
+  const [currencyCode, setCurrencyCode] = useState<CurrencyCode>('USD');
 
-  const value = useMemo(() => ({ currency, setCurrency, currencies }), [currency, currencies]);
+  const selectedCurrencySymbol = useMemo(() => CURRENCY_SYMBOLS[currencyCode], [currencyCode]);
+
+  const getCurrencyDisplayFormat = (code: CurrencyCode): string => {
+    return `${CURRENCY_SYMBOLS[code]} (${code})`;
+  };
+  
+  const value = useMemo(() => ({ 
+    currencyCode, 
+    setCurrencyCode, 
+    availableCurrencies: AVAILABLE_CURRENCIES,
+    selectedCurrencySymbol,
+    getCurrencyDisplayFormat
+  }), [currencyCode, selectedCurrencySymbol]);
 
   return (
     <CurrencyContext.Provider value={value}>

@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useCurrency, type Currency } from '@/contexts/currency-context';
+import { useCurrency, type CurrencyCode } from '@/contexts/currency-context';
 import {
   Select,
   SelectContent,
@@ -10,21 +11,23 @@ import {
 } from "@/components/ui/select";
 
 export function CurrencySelector() {
-  const { currency, setCurrency, currencies } = useCurrency();
+  const { currencyCode, setCurrencyCode, availableCurrencies, getCurrencyDisplayFormat } = useCurrency();
 
   const handleValueChange = (value: string) => {
-    setCurrency(value as Currency);
+    setCurrencyCode(value as CurrencyCode);
   };
 
   return (
-    <Select value={currency} onValueChange={handleValueChange}>
-      <SelectTrigger className="w-[100px] text-primary-foreground bg-primary border-primary-foreground/50 hover:bg-primary/90 focus:ring-primary-foreground">
-        <SelectValue placeholder="Currency" />
+    <Select value={currencyCode} onValueChange={handleValueChange}>
+      <SelectTrigger className="w-auto min-w-[100px] text-primary-foreground bg-primary border-primary-foreground/50 hover:bg-primary/90 focus:ring-primary-foreground">
+        <SelectValue placeholder="Currency">
+          {getCurrencyDisplayFormat(currencyCode)}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent className="bg-popover text-popover-foreground">
-        {currencies.map((curr) => (
-          <SelectItem key={curr} value={curr} className="cursor-pointer hover:bg-accent focus:bg-accent">
-            {curr}
+        {availableCurrencies.map((code) => (
+          <SelectItem key={code} value={code} className="cursor-pointer hover:bg-accent focus:bg-accent">
+            {getCurrencyDisplayFormat(code)}
           </SelectItem>
         ))}
       </SelectContent>

@@ -40,7 +40,7 @@ interface StockAverageFormProps {
 }
 
 export default function StockAverageForm({ calculatorName }: StockAverageFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<StockAverageResult | null>(null);
 
   const form = useForm<StockAverageFormValues>({
@@ -85,7 +85,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                 name="firstBuyPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Buy Price ({currency})</FormLabel>
+                    <FormLabel>First Buy Price ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 100.50" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -113,7 +113,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                 name="secondBuyPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Second Buy Price ({currency}) (Optional)</FormLabel>
+                    <FormLabel>Second Buy Price ({selectedCurrencySymbol}) (Optional)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 95.25" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -157,7 +157,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                     <TableBody>
                       <TableRow>
                         <TableCell>Average Purchase Price</TableCell>
-                        <TableCell className="text-right font-semibold">{currency}{result.averagePrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right font-semibold">{selectedCurrencySymbol}{result.averagePrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Quantity</TableCell>
@@ -165,7 +165,7 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Investment</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalInvestment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalInvestment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>

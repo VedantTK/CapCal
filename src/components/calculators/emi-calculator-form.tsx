@@ -40,7 +40,7 @@ interface EmiCalculatorFormProps {
 }
 
 export default function EmiCalculatorForm({ calculatorName }: EmiCalculatorFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<EmiResult | null>(null);
 
   const form = useForm<EmiFormValues>({
@@ -97,7 +97,7 @@ export default function EmiCalculatorForm({ calculatorName }: EmiCalculatorFormP
                 name="loanAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Loan Amount ({currency})</FormLabel>
+                    <FormLabel>Loan Amount ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 500000" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -160,15 +160,15 @@ export default function EmiCalculatorForm({ calculatorName }: EmiCalculatorFormP
                     <TableBody>
                       <TableRow>
                         <TableCell className="font-semibold">Monthly EMI</TableCell>
-                        <TableCell className="text-right font-bold">{currency}{result.monthlyEmi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right font-bold">{selectedCurrencySymbol}{result.monthlyEmi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Interest Payable</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Payment (Principal + Interest)</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>

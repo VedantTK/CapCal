@@ -40,7 +40,7 @@ interface CagrCalculatorFormProps {
 }
 
 export default function CagrCalculatorForm({ calculatorName }: CagrCalculatorFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<CagrResult | null>(null);
 
   const form = useForm<CagrFormValues>({
@@ -73,7 +73,7 @@ export default function CagrCalculatorForm({ calculatorName }: CagrCalculatorFor
                 name="initialValue"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Initial Investment Value ({currency})</FormLabel>
+                    <FormLabel>Initial Investment Value ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 10000" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -86,7 +86,7 @@ export default function CagrCalculatorForm({ calculatorName }: CagrCalculatorFor
                 name="finalValue"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Final Investment Value ({currency})</FormLabel>
+                    <FormLabel>Final Investment Value ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 25000" {...field} value={field.value ?? ""} />
                     </FormControl>

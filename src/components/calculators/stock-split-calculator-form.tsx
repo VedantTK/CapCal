@@ -43,7 +43,7 @@ interface StockSplitCalculatorFormProps {
 }
 
 export default function StockSplitCalculatorForm({ calculatorName }: StockSplitCalculatorFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<StockSplitResult | null>(null);
 
   const form = useForm<StockSplitFormValues>({
@@ -99,7 +99,7 @@ export default function StockSplitCalculatorForm({ calculatorName }: StockSplitC
                 name="currentPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current Share Price ({currency})</FormLabel>
+                    <FormLabel>Current Share Price ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 50" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -160,11 +160,11 @@ export default function StockSplitCalculatorForm({ calculatorName }: StockSplitC
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-semibold">New Share Price</TableCell>
-                        <TableCell className="text-right font-bold">{currency}{result.newPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right font-bold">{selectedCurrencySymbol}{result.newPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                        <TableRow>
                         <TableCell>Total Value of Holding</TableCell>
-                        <TableCell className="text-right">{currency}{(result.newShares * result.newPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{(result.newShares * result.newPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>

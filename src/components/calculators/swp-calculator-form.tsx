@@ -42,7 +42,7 @@ interface SwpCalculatorFormProps {
 }
 
 export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<SwpResult | null>(null);
 
   const form = useForm<SwpFormValues>({
@@ -101,7 +101,7 @@ export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormP
                 name="totalInvestment"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Total Investment ({currency})</FormLabel>
+                    <FormLabel>Total Investment ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 1000000" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -114,7 +114,7 @@ export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormP
                 name="monthlyWithdrawal"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Monthly Withdrawal Amount ({currency})</FormLabel>
+                    <FormLabel>Monthly Withdrawal Amount ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 5000" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -179,11 +179,11 @@ export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormP
                     <TableBody>
                       <TableRow>
                         <TableCell>Total Amount Withdrawn</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalWithdrawn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalWithdrawn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-semibold">Final Balance After {result.investmentYears} Years</TableCell>
-                        <TableCell className="text-right font-bold">{currency}{result.finalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right font-bold">{selectedCurrencySymbol}{result.finalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>

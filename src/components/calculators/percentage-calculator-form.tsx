@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCurrency } from "@/contexts/currency-context"; // Currency might not be directly applicable here but good to have context
+// import { useCurrency } from "@/contexts/currency-context"; // Currency might not be directly applicable here
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -36,7 +36,7 @@ interface PercentageCalculatorFormProps {
 }
 
 export default function PercentageCalculatorForm({ calculatorName }: PercentageCalculatorFormProps) {
-  const { currency } = useCurrency(); // For consistency, though results might not always be currency
+  // const { selectedCurrencySymbol } = useCurrency(); // Potentially useful if Y is a currency amount
   const [result, setResult] = useState<PercentageResult | null>(null);
 
   const form = useForm<PercentageFormValues>({
@@ -111,6 +111,7 @@ export default function PercentageCalculatorForm({ calculatorName }: PercentageC
                           {form.getValues("percentage")}% of {form.getValues("totalValue")} is:
                         </TableCell>
                         <TableCell className="text-right font-bold">
+                          {/* If totalValue was a currency, you could use selectedCurrencySymbol here */}
                           {result.calculatedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </TableCell>
                       </TableRow>

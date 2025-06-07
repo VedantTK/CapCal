@@ -41,7 +41,7 @@ interface StepUpSipCalculatorFormProps {
 }
 
 export default function StepUpSipCalculatorForm({ calculatorName }: StepUpSipCalculatorFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<StepUpSipResult | null>(null);
 
   const form = useForm<StepUpSipFormValues>({
@@ -98,7 +98,7 @@ export default function StepUpSipCalculatorForm({ calculatorName }: StepUpSipCal
               name="initialMonthlyInvestment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Initial Monthly Investment ({currency})</FormLabel>
+                  <FormLabel>Initial Monthly Investment ({selectedCurrencySymbol})</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="e.g., 5000" {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -193,15 +193,15 @@ export default function StepUpSipCalculatorForm({ calculatorName }: StepUpSipCal
                     <TableBody>
                       <TableRow>
                         <TableCell>Total Amount Invested</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalInvested.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalInvested.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                        <TableRow>
                         <TableCell>Estimated Returns</TableCell>
-                        <TableCell className="text-right">{currency}{result.estimatedReturns.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.estimatedReturns.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-semibold">Projected Total Value</TableCell>
-                        <TableCell className="text-right font-bold">{currency}{result.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right font-bold">{selectedCurrencySymbol}{result.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>

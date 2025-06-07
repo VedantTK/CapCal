@@ -46,7 +46,7 @@ interface StockProfitLossFormProps {
 }
 
 export default function StockProfitLossForm({ calculatorName }: StockProfitLossFormProps) {
-  const { currency } = useCurrency();
+  const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<ProfitLossResult | null>(null);
 
   const form = useForm<ProfitLossFormValues>({
@@ -97,7 +97,7 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
                 name="buyPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Buy Price per Share ({currency})</FormLabel>
+                    <FormLabel>Buy Price per Share ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 100" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -110,7 +110,7 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
                 name="sellPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sell Price per Share ({currency})</FormLabel>
+                    <FormLabel>Sell Price per Share ({selectedCurrencySymbol})</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 120" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -138,7 +138,7 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
                 name="buyCommission"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Buy Commission ({currency}) (Optional)</FormLabel>
+                    <FormLabel>Buy Commission ({selectedCurrencySymbol}) (Optional)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -151,7 +151,7 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
                 name="sellCommission"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sell Commission ({currency}) (Optional)</FormLabel>
+                    <FormLabel>Sell Commission ({selectedCurrencySymbol}) (Optional)</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -179,22 +179,22 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
                     <TableBody>
                       <TableRow>
                         <TableCell>Total Buy Cost (incl. commission)</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalBuyCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalBuyCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Total Sell Value (after commission)</TableCell>
-                        <TableCell className="text-right">{currency}{result.totalSellValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="text-right">{selectedCurrencySymbol}{result.totalSellValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Gross Profit / Loss</TableCell>
                         <TableCell className={cn("text-right", result.grossProfitLoss >= 0 ? "text-emerald-600" : "text-red-600")}>
-                          {currency}{result.grossProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {selectedCurrencySymbol}{result.grossProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </TableCell>
                       </TableRow>
                        <TableRow>
                         <TableCell className="font-semibold">Net Profit / Loss</TableCell>
                         <TableCell className={cn("text-right font-bold", result.isProfit ? "text-emerald-600" : "text-red-600")}>
-                          {result.isProfit ? '+' : ''}{currency}{result.netProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {result.isProfit ? '+' : ''}{selectedCurrencySymbol}{result.netProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </TableCell>
                       </TableRow>
                       <TableRow>
