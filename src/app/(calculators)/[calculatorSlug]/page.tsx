@@ -1,9 +1,9 @@
+
 import { calculators } from '@/lib/calculators';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, BarChart2 } from 'lucide-react';
-// Removed AiChartSuggesterForm import
+import { FileText } from 'lucide-react';
 import StockAverageForm from '@/components/calculators/stock-average-form';
 import StockProfitLossForm from '@/components/calculators/stock-profit-loss-form';
 import SipCalculatorForm from '@/components/calculators/sip-calculator-form';
@@ -30,24 +30,24 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
   const renderCalculatorForm = () => {
     switch (params.calculatorSlug) {
       case 'stock-average':
-        return <StockAverageForm />;
+        return <StockAverageForm calculatorName={calculator.name} />;
       case 'stock-profit-loss':
-        return <StockProfitLossForm />;
+        return <StockProfitLossForm calculatorName={calculator.name} />;
       case 'sip':
-        return <SipCalculatorForm />;
+        return <SipCalculatorForm calculatorName={calculator.name} />;
       case 'percentage':
-        return <PercentageCalculatorForm />;
+        return <PercentageCalculatorForm calculatorName={calculator.name} />;
       case 'emi':
-        return <EmiCalculatorForm />;
+        return <EmiCalculatorForm calculatorName={calculator.name} />;
       case 'cagr':
-        return <CagrCalculatorForm />;
+        return <CagrCalculatorForm calculatorName={calculator.name} />;
       case 'swp':
-        return <SwpCalculatorForm />;
+        return <SwpCalculatorForm calculatorName={calculator.name} />;
       case 'stock-split':
-        return <StockSplitCalculatorForm />;
-      // Removed 'ai-chart-suggestion' case
+        return <StockSplitCalculatorForm calculatorName={calculator.name} />;
       default:
-        return <p className="text-muted-foreground">Calculator form coming soon for {calculator.name}.</p>;
+        // This case should ideally not be reached if slugs are correct
+        return <Card><CardHeader><CardTitle>Coming Soon</CardTitle></CardHeader><CardContent><p className="text-muted-foreground">Calculator form coming soon for {calculator.name}.</p></CardContent></Card>;
     }
   };
 
@@ -58,51 +58,23 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
         <p className="mt-2 text-lg text-muted-foreground">{calculator.description}</p>
       </header>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Input Parameters</CardTitle>
-          <CardDescription>Enter the required values for the calculation.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {renderCalculatorForm()}
-        </CardContent>
-      </Card>
+      {renderCalculatorForm()}
 
-      {/* Results and Visualization cards are now always shown */}
       <Card>
        <CardHeader>
-         <CardTitle>Results</CardTitle>
-         <CardDescription>View your calculation results below.</CardDescription>
+         <CardTitle>Disclaimer &amp; Actions</CardTitle>
        </CardHeader>
        <CardContent>
-         <p className="text-muted-foreground">Calculation results will appear here.</p>
-         {/* Placeholder for results display */}
+          <p className="text-xs text-muted-foreground">Disclaimer: Calculations are estimates and intended for informational purposes only. Always consult with a financial advisor before making investment decisions. Market risks apply.</p>
        </CardContent>
        <CardFooter className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
-          <div>
-              <p className="text-xs text-muted-foreground">Disclaimer: Calculations are estimates and subject to market risks.</p>
-          </div>
           <div className="flex gap-2">
-              <Button variant="outline">
-              <FileText className="mr-2 h-4 w-4" /> Export to PDF
+              <Button variant="outline" disabled>
+              <FileText className="mr-2 h-4 w-4" /> Export to PDF (Coming Soon)
               </Button>
           </div>
        </CardFooter>
      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Visualizations</CardTitle>
-          <CardDescription>Interactive chart based on your calculation.</CardDescription>
-        </CardHeader>
-        <CardContent className="min-h-[200px] flex items-center justify-center bg-muted/50 rounded-md">
-          <div className="text-center text-muted-foreground">
-            <BarChart2 className="mx-auto h-12 w-12 mb-2" />
-            <p>Chart visualization will appear here.</p>
-          </div>
-          {/* Placeholder for chart */}
-        </CardContent>
-      </Card>
     </div>
   );
 }
