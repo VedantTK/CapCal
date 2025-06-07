@@ -12,6 +12,8 @@ import EmiCalculatorForm from '@/components/calculators/emi-calculator-form';
 import CagrCalculatorForm from '@/components/calculators/cagr-calculator-form';
 import SwpCalculatorForm from '@/components/calculators/swp-calculator-form';
 import StockSplitCalculatorForm from '@/components/calculators/stock-split-calculator-form';
+import StepUpSipCalculatorForm from '@/components/calculators/step-up-sip-calculator-form';
+import PlaceholderForm from '@/components/calculators/placeholder-form';
 
 
 export async function generateStaticParams() {
@@ -35,6 +37,8 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
         return <StockProfitLossForm calculatorName={calculator.name} />;
       case 'sip':
         return <SipCalculatorForm calculatorName={calculator.name} />;
+      case 'step-up-sip':
+        return <StepUpSipCalculatorForm calculatorName={calculator.name} />;
       case 'percentage':
         return <PercentageCalculatorForm calculatorName={calculator.name} />;
       case 'emi':
@@ -46,8 +50,9 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
       case 'stock-split':
         return <StockSplitCalculatorForm calculatorName={calculator.name} />;
       default:
-        // This case should ideally not be reached if slugs are correct
-        return <Card><CardHeader><CardTitle>Coming Soon</CardTitle></CardHeader><CardContent><p className="text-muted-foreground">Calculator form coming soon for {calculator.name}.</p></CardContent></Card>;
+        // This case might be hit if a new calculator is added to calculators.ts 
+        // but not to this switch statement, or for calculators still using PlaceholderForm.
+        return <PlaceholderForm calculatorName={calculator.name} />;
     }
   };
 

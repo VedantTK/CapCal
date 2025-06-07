@@ -1,6 +1,6 @@
 
 import type { CalculatorInfo } from '@/lib/types';
-import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork } from 'lucide-react';
+import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, TrendingDown, ArrowRightLeft, BarChartBig } from 'lucide-react';
 
 export const calculators: CalculatorInfo[] = [
   {
@@ -29,6 +29,15 @@ export const calculators: CalculatorInfo[] = [
     path: '/sip',
     icon: PiggyBank,
     color: 'text-amber-500',
+  },
+  {
+    id: 'step-up-sip',
+    slug: 'step-up-sip',
+    name: 'Step-up SIP Calculator',
+    description: 'Calculate returns for SIPs with annual investment increments.',
+    path: '/step-up-sip',
+    icon: BarChartBig, // Or another icon like TrendingUp with a different color
+    color: 'text-teal-500',
   },
   {
     id: 'percentage',
@@ -63,7 +72,7 @@ export const calculators: CalculatorInfo[] = [
     name: 'SWP Calculator',
     description: 'Calculate systematic withdrawal amounts and remaining balance.',
     path: '/swp',
-    icon: WalletCards,
+    icon: WalletCards, // or TrendingDown
     color: 'text-cyan-500',
   },
   {
@@ -72,8 +81,7 @@ export const calculators: CalculatorInfo[] = [
     name: 'Stock Split Calculator',
     description: 'Determine the impact of stock splits on share quantity and price.',
     path: '/stock-split',
-    icon: GitFork,
+    icon: GitFork, // or ArrowRightLeft
     color: 'text-purple-500',
   },
-  // Removed AI Chart Suggester
 ];
