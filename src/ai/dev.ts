@@ -1,4 +1,4 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/suggest-chart-type.ts';
+// Removed import for suggest-chart-type.ts as the feature is being removed.

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, BarChart2 } from 'lucide-react';
-import AiChartSuggesterForm from '@/components/ai-chart-suggester-form'; // Placeholder for AI form if needed directly
+// Removed AiChartSuggesterForm import
 import StockAverageForm from '@/components/calculators/stock-average-form';
 import StockProfitLossForm from '@/components/calculators/stock-profit-loss-form';
 import SipCalculatorForm from '@/components/calculators/sip-calculator-form';
@@ -45,8 +45,7 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
         return <SwpCalculatorForm />;
       case 'stock-split':
         return <StockSplitCalculatorForm />;
-      case 'ai-chart-suggestion':
-        return <AiChartSuggesterForm />; // Specific component for AI Chart Suggester
+      // Removed 'ai-chart-suggestion' case
       default:
         return <p className="text-muted-foreground">Calculator form coming soon for {calculator.name}.</p>;
     }
@@ -69,44 +68,41 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
         </CardContent>
       </Card>
 
-      {params.calculatorSlug !== 'ai-chart-suggestion' && (
-         <Card>
-         <CardHeader>
-           <CardTitle>Results</CardTitle>
-           <CardDescription>View your calculation results below.</CardDescription>
-         </CardHeader>
-         <CardContent>
-           <p className="text-muted-foreground">Calculation results will appear here.</p>
-           {/* Placeholder for results display */}
-         </CardContent>
-         <CardFooter className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
-            <div>
-                <p className="text-xs text-muted-foreground">Disclaimer: Calculations are estimates and subject to market risks.</p>
-            </div>
-            <div className="flex gap-2">
-                <Button variant="outline">
-                <FileText className="mr-2 h-4 w-4" /> Export to PDF
-                </Button>
-            </div>
-         </CardFooter>
-       </Card>
-      )}
+      {/* Results and Visualization cards are now always shown */}
+      <Card>
+       <CardHeader>
+         <CardTitle>Results</CardTitle>
+         <CardDescription>View your calculation results below.</CardDescription>
+       </CardHeader>
+       <CardContent>
+         <p className="text-muted-foreground">Calculation results will appear here.</p>
+         {/* Placeholder for results display */}
+       </CardContent>
+       <CardFooter className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
+          <div>
+              <p className="text-xs text-muted-foreground">Disclaimer: Calculations are estimates and subject to market risks.</p>
+          </div>
+          <div className="flex gap-2">
+              <Button variant="outline">
+              <FileText className="mr-2 h-4 w-4" /> Export to PDF
+              </Button>
+          </div>
+       </CardFooter>
+     </Card>
 
-      {params.calculatorSlug !== 'ai-chart-suggestion' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Visualizations</CardTitle>
-            <CardDescription>Interactive chart based on your calculation.</CardDescription>
-          </CardHeader>
-          <CardContent className="min-h-[200px] flex items-center justify-center bg-muted/50 rounded-md">
-            <div className="text-center text-muted-foreground">
-              <BarChart2 className="mx-auto h-12 w-12 mb-2" />
-              <p>Chart visualization will appear here.</p>
-            </div>
-            {/* Placeholder for chart */}
-          </CardContent>
-        </Card>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Visualizations</CardTitle>
+          <CardDescription>Interactive chart based on your calculation.</CardDescription>
+        </CardHeader>
+        <CardContent className="min-h-[200px] flex items-center justify-center bg-muted/50 rounded-md">
+          <div className="text-center text-muted-foreground">
+            <BarChart2 className="mx-auto h-12 w-12 mb-2" />
+            <p>Chart visualization will appear here.</p>
+          </div>
+          {/* Placeholder for chart */}
+        </CardContent>
+      </Card>
     </div>
   );
 }

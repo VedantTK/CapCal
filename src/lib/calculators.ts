@@ -1,5 +1,5 @@
 import type { CalculatorInfo } from '@/lib/types';
-import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, BrainCircuit } from 'lucide-react';
+import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork } from 'lucide-react';
 
 export const calculators: CalculatorInfo[] = [
   {
@@ -74,13 +74,5 @@ export const calculators: CalculatorInfo[] = [
     icon: GitFork,
     color: 'text-purple-500',
   },
-  {
-    id: 'ai-chart-suggestion',
-    slug: 'ai-chart-suggestion',
-    name: 'AI Chart Suggester',
-    description: 'Get AI-powered suggestions for the best chart type for your data.',
-    path: '/calculators/ai-chart-suggestion',
-    icon: BrainCircuit,
-    color: 'text-pink-500',
-  }
+  // Removed AI Chart Suggester
 ];
