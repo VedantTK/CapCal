@@ -7,6 +7,9 @@
   packages = [
     pkgs.nodejs_20
     pkgs.zulu
+    pkgs.docker
+    pkgs.sudo
+    pkgs.systemd
   ];
   # Sets environment variables in the workspace
   env = {};
