@@ -1,42 +1,66 @@
-# Stage 1: Build the application
-FROM node:20-alpine AS builder
+# Stage 1: Build the Next.js application
+FROM node:18-alpine AS builder
+
+# Set working directory
 WORKDIR /app
 
 # Install dependencies
+# Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
-# Using npm ci for cleaner installs if package-lock.json is present
-# Fallback to npm install if package-lock.json is not available
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+# If you are using yarn, uncomment the next line and comment out the npm ci line
+# COPY yarn.lock ./
+# RUN yarn install --frozen-lockfile
+RUN npm ci
 
 # Copy the rest of the application code
 COPY . .
 
-# Ensure the public directory exists in the builder stage, even if it's not in the source
-# This prevents the COPY command in the runner stage from failing if /public is not in the project root.
-RUN mkdir -p /app/public
+# Set environment variables for build time (if any)
+# ENV NEXT_PUBLIC_SOME_VARIABLE=your_value
 
-# Build the Next.js application
+# Build the application
 RUN npm run build
 
+# Ensure the public directory exists in the builder stage
+# This prevents an error if the public folder is missing during the COPY operation.
+RUN mkdir -p /app/public
+
+
 # Stage 2: Production image
-FROM node:20-alpine AS runner
+FROM node:18-alpine AS runner
+
 WORKDIR /app
 
-ENV NODE_ENV production
-# The Next.js app runs on port 3000 by default, but this can be changed.
-EXPOSE 3000
+# Create a non-root user and group
+# Using 'node' as user and group name to be more standard with node images
+RUN addgroup -S node && adduser -S node -G node
 
-# Copy built assets from the builder stage with correct ownership for the 'node' user
+# Set environment variables
+ENV NODE_ENV=production
+# ENV PORT=3000 # Next.js default is 3000, uncomment if you need to change
+
+# Copy built assets from the builder stage
+
+# Copy the 'public' folder
 COPY --from=builder --chown=node:node /app/public ./public
+# Copy the '.next' folder which contains the build output
 COPY --from=builder --chown=node:node /app/.next ./.next
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/package.json ./package.json
-# If you have a next.config.js or other root config files needed at runtime, copy them too:
-# COPY --from=builder --chown=node:node /app/next.config.js ./next.config.js
 
-# Set the user to 'node' for better security *after* files are copied and owned correctly
+# Copy node_modules
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+
+# Copy package.json
+COPY --from=builder --chown=node:node /app/package.json ./package.json
+
+# If your Next.js app uses a custom server.js, copy it as well
+# COPY --from=builder --chown=node:node /app/server.js ./server.js
+
+# Switch to the non-root user
 USER node
 
-# The command to run the Next.js application
-# 'npm start' will execute the 'next start' script defined in package.json
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Start the application
+# The default command for Next.js is `next start`
 CMD ["npm", "start"]
