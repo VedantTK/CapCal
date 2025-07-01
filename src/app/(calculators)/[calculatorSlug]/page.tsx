@@ -1,9 +1,6 @@
 
 import { calculators } from '@/lib/calculators';
 import { notFound } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FileText } from 'lucide-react';
 import StockAverageForm from '@/components/calculators/stock-average-form';
 import StockProfitLossForm from '@/components/calculators/stock-profit-loss-form';
 import SipCalculatorForm from '@/components/calculators/sip-calculator-form';
@@ -14,6 +11,7 @@ import SwpCalculatorForm from '@/components/calculators/swp-calculator-form';
 import StockSplitCalculatorForm from '@/components/calculators/stock-split-calculator-form';
 import StepUpSipCalculatorForm from '@/components/calculators/step-up-sip-calculator-form';
 import PlaceholderForm from '@/components/calculators/placeholder-form';
+import CalculatorShell from '@/components/calculator-shell';
 
 
 export async function generateStaticParams() {
@@ -63,23 +61,9 @@ export default function CalculatorPage({ params }: { params: { calculatorSlug: s
         <p className="mt-2 text-lg text-muted-foreground">{calculator.description}</p>
       </header>
 
-      {renderCalculatorForm()}
-
-      <Card>
-       <CardHeader>
-         <CardTitle>Disclaimer &amp; Actions</CardTitle>
-       </CardHeader>
-       <CardContent>
-          <p className="text-xs text-muted-foreground">Disclaimer: Calculations are estimates and intended for informational purposes only. Always consult with a financial advisor before making investment decisions. Market risks apply.</p>
-       </CardContent>
-       <CardFooter className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
-          <div className="flex gap-2">
-              <Button variant="outline" disabled>
-              <FileText className="mr-2 h-4 w-4" /> Export to PDF (Coming Soon)
-              </Button>
-          </div>
-       </CardFooter>
-     </Card>
+      <CalculatorShell calculatorSlug={calculator.slug}>
+        {renderCalculatorForm()}
+      </CalculatorShell>
     </div>
   );
 }
