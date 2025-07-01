@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -34,6 +34,7 @@ interface StepUpSipResult {
   totalInvested: number;
   estimatedReturns: number;
   totalValue: number;
+  yearlyBreakdown: { year: number; monthlySip: number }[];
 }
 
 interface StepUpSipCalculatorFormProps {
@@ -67,8 +68,10 @@ export default function StepUpSipCalculatorForm({ calculatorName, onResultUpdate
     let currentMonthlySip = data.initialMonthlyInvestment;
     const monthlyReturnRate = data.annualReturnRate / 100 / 12;
     const stepUpRate = data.annualStepUpPercentage / 100;
+    const breakdown: { year: number; monthlySip: number }[] = [];
 
     for (let year = 1; year <= data.timePeriodYears; year++) {
+      breakdown.push({ year, monthlySip: currentMonthlySip });
       let yearlyInvestment = 0;
       for (let month = 1; month <= 12; month++) {
         futureValue = (futureValue + currentMonthlySip) * (1 + monthlyReturnRate);
@@ -84,6 +87,7 @@ export default function StepUpSipCalculatorForm({ calculatorName, onResultUpdate
       totalInvested: totalInvestedAmount,
       estimatedReturns,
       totalValue: futureValue,
+      yearlyBreakdown: breakdown,
     };
     setResult(resultData);
 
@@ -227,6 +231,29 @@ export default function StepUpSipCalculatorForm({ calculatorName, onResultUpdate
                    <FormDescription className="mt-4">
                     Note: This is an estimated projection. Actual returns may vary based on market conditions.
                   </FormDescription>
+
+                  <CardTitle className="text-xl pt-6 pb-2">Yearly SIP Amount Breakdown</CardTitle>
+                  <div className="mt-2 rounded-md border max-h-60 overflow-y-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-semibold">Year</TableHead>
+                          <TableHead className="text-right font-semibold">New Monthly SIP</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {result.yearlyBreakdown.map((item) => (
+                          <TableRow key={item.year}>
+                            <TableCell>{item.year}</TableCell>
+                            <TableCell className="text-right">
+                              {selectedCurrencySymbol}
+                              {item.monthlySip.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </CardContent>
               </Card>
             )}
