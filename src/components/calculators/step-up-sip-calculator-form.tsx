@@ -92,13 +92,16 @@ export default function StepUpSipCalculatorForm({ calculatorName, onResultUpdate
     setResult(resultData);
 
     const exportData = {
-      "Initial Monthly Investment": data.initialMonthlyInvestment,
-      "Annual Step-up (%)": data.annualStepUpPercentage,
-      "Expected Annual Return (%)": data.annualReturnRate,
-      "Time Period (Years)": data.timePeriodYears,
-      "Total Amount Invested": totalInvestedAmount.toFixed(2),
-      "Estimated Returns": estimatedReturns.toFixed(2),
-      "Projected Total Value": futureValue.toFixed(2),
+      summary: {
+        "Initial Monthly Investment": data.initialMonthlyInvestment,
+        "Annual Step-up (%)": data.annualStepUpPercentage,
+        "Expected Annual Return (%)": data.annualReturnRate,
+        "Time Period (Years)": data.timePeriodYears,
+        "Total Amount Invested": totalInvestedAmount.toFixed(2),
+        "Estimated Returns": estimatedReturns.toFixed(2),
+        "Projected Total Value": futureValue.toFixed(2),
+      },
+      yearlyBreakdown: breakdown,
     };
     onResultUpdate(exportData);
   }

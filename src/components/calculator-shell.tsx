@@ -37,12 +37,13 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
       return [headers.join(','), ...rows].join('\n');
     };
     
-    // New structure for EMI/Home Loan calculators with amortization schedules
-    if (resultData.summary && (resultData.yearlySchedule || resultData.monthlySchedule)) {
+    // New structure for complex calculators with summary and breakdowns
+    if (resultData.summary && (resultData.yearlySchedule || resultData.monthlySchedule || resultData.yearlyBreakdown)) {
       
       const summaryCsv = 'Description,Value\n' + Object.entries(resultData.summary).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
       csvContent += summaryCsv + '\n\n';
 
+      // For EMI / Home Loan
       if (resultData.yearlySchedule && resultData.yearlySchedule.length > 0) {
         csvContent += 'Yearly Amortization Schedule\n';
         const yearlyDataForCsv = resultData.yearlySchedule.map((row: any) => ({
@@ -54,6 +55,7 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
         csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
       }
       
+      // For EMI / Home Loan
       if (resultData.monthlySchedule && resultData.monthlySchedule.length > 0) {
         csvContent += 'Monthly Amortization Schedule\n';
         const monthlyDataForCsv = resultData.monthlySchedule.map((row: any) => ({
@@ -64,6 +66,16 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
           'Ending Balance': row.endingBalance.toFixed(2),
         }));
         csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
+      }
+
+      // For Step-up SIP
+      if (resultData.yearlyBreakdown && resultData.yearlyBreakdown.length > 0) {
+        csvContent += 'Yearly SIP Amount Breakdown\n';
+        const sipDataForCsv = resultData.yearlyBreakdown.map((row: any) => ({
+          'Year': row.year,
+          'New Monthly SIP': row.monthlySip.toFixed(2),
+        }));
+        csvContent += arrayToCsv(sipDataForCsv) + '\n\n';
       }
 
     } else { // Fallback for other calculators
