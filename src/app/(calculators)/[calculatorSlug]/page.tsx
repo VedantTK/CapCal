@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { calculators } from '@/lib/calculators';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import StockAverageForm from '@/components/calculators/stock-average-form';
 import StockProfitLossForm from '@/components/calculators/stock-profit-loss-form';
 import SipCalculatorForm from '@/components/calculators/sip-calculator-form';
@@ -19,7 +19,8 @@ import CalculatorShell from '@/components/calculator-shell';
 // Note: This page is a client component because it needs to manage state
 // between the calculator form and the calculator shell (for exporting results).
 
-export default function CalculatorPage({ params }: { params: { calculatorSlug: string } }) {
+export default function CalculatorPage() {
+  const params = useParams<{ calculatorSlug: string }>();
   const [resultData, setResultData] = useState<Record<string, any> | null>(null);
 
   // We can't use generateStaticParams in a client component directly, 
