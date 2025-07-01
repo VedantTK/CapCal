@@ -8,7 +8,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <footer className="text-center p-4 text-sm text-muted-foreground border-t">
-        Global Invest Pro © {new Date().getFullYear()}. All results are estimates and subject to market risks.
+        CapCal © {new Date().getFullYear()}. All results are estimates and subject to market risks.
       </footer>
     </div>
   );

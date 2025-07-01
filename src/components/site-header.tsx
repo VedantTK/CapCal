@@ -9,7 +9,7 @@ export default function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <MountainIcon className="h-6 w-6" />
-          <span className="text-lg font-semibold font-headline">Global Invest Pro</span>
+          <span className="text-lg font-semibold font-headline">CapCal</span>
         </Link>
         <div className="flex items-center gap-2">
           <CurrencySelector />
