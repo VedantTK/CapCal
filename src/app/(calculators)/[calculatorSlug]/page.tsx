@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { calculators } from '@/lib/calculators';
 import { notFound, useParams } from 'next/navigation';
 import StockAverageForm from '@/components/calculators/stock-average-form';
@@ -33,9 +33,9 @@ export default function CalculatorPage() {
     notFound();
   }
   
-  const handleResultUpdate = (data: Record<string, any> | null) => {
+  const handleResultUpdate = useCallback((data: Record<string, any> | null) => {
     setResultData(data);
-  };
+  }, []);
 
   const renderCalculatorForm = () => {
     switch (params.calculatorSlug) {
