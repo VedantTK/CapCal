@@ -21,7 +21,6 @@ import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const homeLoanEmiSchema = z.object({
   loanAmount: z.coerce.number().positive("Loan amount must be positive."),
@@ -261,29 +260,27 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                         <CardHeader>
                             <CardTitle>Yearly Amortization Schedule</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <ScrollArea className="h-72">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-[100px]">Year</TableHead>
-                                            <TableHead className="text-right">Principal Paid</TableHead>
-                                            <TableHead className="text-right">Interest Paid</TableHead>
-                                            <TableHead className="text-right">Ending Balance</TableHead>
+                        <CardContent className="h-72 overflow-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[100px]">Year</TableHead>
+                                        <TableHead className="text-right">Principal Paid</TableHead>
+                                        <TableHead className="text-right">Interest Paid</TableHead>
+                                        <TableHead className="text-right">Ending Balance</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {result.yearlySchedule.map((row) => (
+                                        <TableRow key={row.year}>
+                                            <TableCell>{row.year}</TableCell>
+                                            <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                         </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {result.yearlySchedule.map((row) => (
-                                            <TableRow key={row.year}>
-                                                <TableCell>{row.year}</TableCell>
-                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </ScrollArea>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </CardContent>
                       </Card>
                     </TabsContent>
@@ -292,31 +289,29 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                             <CardHeader>
                                 <CardTitle>Monthly Amortization Schedule</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <ScrollArea className="h-72">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-[80px]">Month</TableHead>
-                                                <TableHead className="text-right">Principal Paid</TableHead>
-                                                <TableHead className="text-right">Interest Paid</TableHead>
-                                                <TableHead className="text-right">Total Payment</TableHead>
-                                                <TableHead className="text-right">Ending Balance</TableHead>
+                            <CardContent className="h-72 overflow-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[80px]">Month</TableHead>
+                                            <TableHead className="text-right">Principal Paid</TableHead>
+                                            <TableHead className="text-right">Interest Paid</TableHead>
+                                            <TableHead className="text-right">Total Payment</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.monthlySchedule.map((row) => (
+                                            <TableRow key={row.month}>
+                                                <TableCell>{row.month}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                             </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {result.monthlySchedule.map((row) => (
-                                                <TableRow key={row.month}>
-                                                    <TableCell>{row.month}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </ScrollArea>
+                                        ))}
+                                    </TableBody>
+                                </Table>
                             </CardContent>
                         </Card>
                     </TabsContent>
