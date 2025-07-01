@@ -15,18 +15,12 @@ import StockSplitCalculatorForm from '@/components/calculators/stock-split-calcu
 import StepUpSipCalculatorForm from '@/components/calculators/step-up-sip-calculator-form';
 import PlaceholderForm from '@/components/calculators/placeholder-form';
 import CalculatorShell from '@/components/calculator-shell';
-
-// Note: This page is a client component because it needs to manage state
-// between the calculator form and the calculator shell (for exporting results).
+import HomeLoanEmiCalculatorForm from '@/components/calculators/home-loan-emi-calculator-form';
 
 export default function CalculatorPage() {
   const params = useParams<{ calculatorSlug: string }>();
   const [resultData, setResultData] = useState<Record<string, any> | null>(null);
 
-  // We can't use generateStaticParams in a client component directly, 
-  // but Next.js will still pre-render these pages at build time if the data is available.
-  // For a fully static export, this page structure would need adjustment, 
-  // but it works perfectly in a dynamic Next.js app.
   const calculator = calculators.find(c => c.slug === params.calculatorSlug);
 
   if (!calculator) {
@@ -51,6 +45,8 @@ export default function CalculatorPage() {
         return <PercentageCalculatorForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
       case 'emi':
         return <EmiCalculatorForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
+      case 'home-loan-emi':
+        return <HomeLoanEmiCalculatorForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
       case 'cagr':
         return <CagrCalculatorForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
       case 'swp':

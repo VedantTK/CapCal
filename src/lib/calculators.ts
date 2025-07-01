@@ -1,6 +1,6 @@
 
 import type { CalculatorInfo } from '@/lib/types';
-import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, TrendingDown, ArrowRightLeft, BarChartBig } from 'lucide-react';
+import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, BarChartBig, Home } from 'lucide-react';
 
 export const calculators: CalculatorInfo[] = [
   {
@@ -36,7 +36,7 @@ export const calculators: CalculatorInfo[] = [
     name: 'Step-up SIP Calculator',
     description: 'Calculate returns for SIPs with annual investment increments.',
     path: '/step-up-sip',
-    icon: BarChartBig, // Or another icon like TrendingUp with a different color
+    icon: BarChartBig,
     color: 'text-teal-500',
   },
   {
@@ -58,6 +58,15 @@ export const calculators: CalculatorInfo[] = [
     color: 'text-rose-500',
   },
   {
+    id: 'home-loan-emi',
+    slug: 'home-loan-emi',
+    name: 'Home Loan EMI Calculator',
+    description: 'Calculate EMI and view amortization for home loans.',
+    path: '/home-loan-emi',
+    icon: Home,
+    color: 'text-orange-500',
+  },
+  {
     id: 'cagr',
     slug: 'cagr',
     name: 'CAGR Calculator',
@@ -72,7 +81,7 @@ export const calculators: CalculatorInfo[] = [
     name: 'SWP Calculator',
     description: 'Calculate systematic withdrawal amounts and remaining balance.',
     path: '/swp',
-    icon: WalletCards, // or TrendingDown
+    icon: WalletCards,
     color: 'text-cyan-500',
   },
   {
@@ -81,7 +90,7 @@ export const calculators: CalculatorInfo[] = [
     name: 'Stock Split Calculator',
     description: 'Determine the impact of stock splits on share quantity and price.',
     path: '/stock-split',
-    icon: GitFork, // or ArrowRightLeft
+    icon: GitFork,
     color: 'text-purple-500',
   },
 ];
