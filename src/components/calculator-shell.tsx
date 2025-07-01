@@ -6,23 +6,25 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText } from 'lucide-react';
+import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface CalculatorShellProps {
   children: React.ReactNode;
   calculatorSlug: string;
+  resultData: Record<string, any> | null;
 }
 
-export default function CalculatorShell({ children, calculatorSlug }: CalculatorShellProps) {
+export default function CalculatorShell({ children, calculatorSlug, resultData }: CalculatorShellProps) {
   const printRef = useRef<HTMLDivElement>(null);
 
   const handleExportPdf = async () => {
-    const element = printRef.current;
+    // We target the parent of the shell which contains the actual calculator form.
+    const element = printRef.current?.parentElement;
     if (!element) {
       console.error("The element to print was not found.");
       return;
     }
-
+    
     // Temporarily change background color for capture if in dark mode
     const isDarkMode = document.documentElement.classList.contains('dark');
     const originalBackgroundColor = element.style.backgroundColor;
@@ -33,6 +35,8 @@ export default function CalculatorShell({ children, calculatorSlug }: Calculator
     const canvas = await html2canvas(element, {
       scale: 2, // Improve resolution
       backgroundColor: isDarkMode ? '#ffffff' : null, // Ensure background is white for dark mode
+      // Select only the calculator card and not the disclaimer/actions card.
+      ignoreElements: (el) => el.hasAttribute('data-ignore-pdf'),
     });
 
     // Revert background color change
@@ -45,46 +49,75 @@ export default function CalculatorShell({ children, calculatorSlug }: Calculator
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'px',
-      // Make pdf size slightly larger than canvas to avoid cutoff
       format: [canvas.width + 20, canvas.height + 20], 
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+    
+    // Scale image to fit pdf width if it's too large
+    const imgProps = pdf.getImageProperties(data);
+    const pdfCanvasWidth = pdfWidth - 20; // with some padding
+    const pdfCanvasHeight = (imgProps.height * pdfCanvasWidth) / imgProps.width;
 
-    // Center the image on the PDF page
-    const x = (pdfWidth - canvasWidth) / 2;
-    const y = (pdfHeight - canvasHeight) / 2;
+    const x = (pdfWidth - pdfCanvasWidth) / 2;
+    const y = (pdfHeight - pdfCanvasHeight) / 2;
 
-    pdf.addImage(data, 'PNG', x > 0 ? x : 0, y > 0 ? y : 0, canvasWidth, canvasHeight);
+    pdf.addImage(data, 'PNG', x > 0 ? x : 0, y > 0 ? y : 0, pdfCanvasWidth, pdfCanvasHeight);
     pdf.save(`${calculatorSlug}-calculation.pdf`);
   };
 
-  return (
-    <>
-      <div ref={printRef} className="p-1">
-        {children}
-      </div>
+  const handleExportCsv = () => {
+    if (!resultData) return;
 
-      <Card>
+    const headers = Object.keys(resultData);
+    const values = Object.values(resultData).map(val => {
+      // Handle potential commas in string values by wrapping them in quotes
+      if (typeof val === 'string' && val.includes(',')) {
+        return `"${val}"`;
+      }
+      return val;
+    });
+
+    const csvContent = [
+      headers.join(','),
+      values.join(',')
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.href) {
+      URL.revokeObjectURL(link.href);
+    }
+    link.href = URL.createObjectURL(blob);
+    link.download = `${calculatorSlug}-calculation.csv`;
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+  return (
+    <div ref={printRef}>
+      <Card data-ignore-pdf>
         <CardHeader>
           <CardTitle>Disclaimer &amp; Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-muted-foreground">
-            Disclaimer: Calculations are estimates and intended for informational purposes only. Always consult with a financial advisor before making investment decisions. Market risks apply.
-          </p>
+          {children}
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleExportPdf}>
               <FileText className="mr-2 h-4 w-4" /> Export to PDF
             </Button>
+            <Button variant="outline" onClick={handleExportCsv} disabled={!resultData}>
+              <FileSpreadsheet className="mr-2 h-4 w-4" /> Export to CSV
+            </Button>
           </div>
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 }

@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -39,9 +39,10 @@ interface SwpResult {
 
 interface SwpCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormProps) {
+export default function SwpCalculatorForm({ calculatorName, onResultUpdate }: SwpCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<SwpResult | null>(null);
 
@@ -55,6 +56,13 @@ export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormP
     },
   });
 
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
+
+
   function onSubmit(data: SwpFormValues) {
     let currentBalance = data.totalInvestment;
     let totalWithdrawnAmount = 0;
@@ -62,25 +70,35 @@ export default function SwpCalculatorForm({ calculatorName }: SwpCalculatorFormP
     const numberOfMonths = data.investmentPeriodYears * 12;
 
     for (let i = 0; i < numberOfMonths; i++) {
-      if (currentBalance <= 0) break; // Stop if balance depletes
+      if (currentBalance <= 0) break;
 
-      // Withdraw at the beginning of the month
       const withdrawalThisMonth = Math.min(currentBalance, data.monthlyWithdrawal);
       currentBalance -= withdrawalThisMonth;
       totalWithdrawnAmount += withdrawalThisMonth;
       
-      // Calculate earnings on remaining balance for the month
       if (currentBalance > 0) {
           currentBalance += currentBalance * monthlyReturnRate;
       }
     }
-
-    setResult({
+    
+    const finalBalance = currentBalance > 0 ? currentBalance : 0;
+    const resultData = {
       totalWithdrawn: totalWithdrawnAmount,
-      finalBalance: currentBalance > 0 ? currentBalance : 0,
+      finalBalance,
       investmentYears: data.investmentPeriodYears,
       annualReturnRate: data.annualReturnRate,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      "Total Investment": data.totalInvestment,
+      "Monthly Withdrawal Amount": data.monthlyWithdrawal,
+      "Expected Annual Return Rate (%)": data.annualReturnRate,
+      "Investment Period (Years)": data.investmentPeriodYears,
+      "Total Amount Withdrawn": totalWithdrawnAmount.toFixed(2),
+      "Final Balance": finalBalance.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   const periodOptions = Array.from({ length: 50 }, (_, i) => i + 1);

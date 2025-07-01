@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const stockSplitSchema = z.object({
@@ -40,9 +40,10 @@ interface StockSplitResult {
 
 interface StockSplitCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function StockSplitCalculatorForm({ calculatorName }: StockSplitCalculatorFormProps) {
+export default function StockSplitCalculatorForm({ calculatorName, onResultUpdate }: StockSplitCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<StockSplitResult | null>(null);
 
@@ -51,10 +52,16 @@ export default function StockSplitCalculatorForm({ calculatorName }: StockSplitC
     defaultValues: {
       currentShares: undefined,
       currentPrice: undefined,
-      splitRatioNew: 2, // Common default for a 2-for-1 split
+      splitRatioNew: 2,
       splitRatioOld: 1,
     },
   });
+
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
 
   function onSubmit(data: StockSplitFormValues) {
     const { currentShares, currentPrice, splitRatioNew, splitRatioOld } = data;
@@ -64,11 +71,22 @@ export default function StockSplitCalculatorForm({ calculatorName }: StockSplitC
     
     const splitRatioText = `${splitRatioNew}-for-${splitRatioOld}`;
 
-    setResult({
+    const resultData = {
       newShares,
       newPrice,
       splitRatioText,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      "Current Number of Shares": currentShares,
+      "Current Share Price": currentPrice,
+      "Split Ratio": splitRatioText,
+      "New Number of Shares": newShares.toFixed(0),
+      "New Share Price": newPrice.toFixed(2),
+      "Total Value of Holding": (newShares * newPrice).toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   return (

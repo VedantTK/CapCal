@@ -15,11 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-// import { useCurrency } from "@/contexts/currency-context"; // Currency might not be directly applicable here
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-// Schema for "What is X% of Y?"
 const percentageSchema = z.object({
   percentage: z.coerce.number().min(0, "Percentage cannot be negative."),
   totalValue: z.coerce.number().min(0, "Total value cannot be negative."),
@@ -33,10 +31,10 @@ interface PercentageResult {
 
 interface PercentageCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function PercentageCalculatorForm({ calculatorName }: PercentageCalculatorFormProps) {
-  // const { selectedCurrencySymbol } = useCurrency(); // Potentially useful if Y is a currency amount
+export default function PercentageCalculatorForm({ calculatorName, onResultUpdate }: PercentageCalculatorFormProps) {
   const [result, setResult] = useState<PercentageResult | null>(null);
 
   const form = useForm<PercentageFormValues>({
@@ -47,9 +45,24 @@ export default function PercentageCalculatorForm({ calculatorName }: PercentageC
     },
   });
 
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
+
+
   function onSubmit(data: PercentageFormValues) {
     const calculatedValue = (data.percentage / 100) * data.totalValue;
-    setResult({ calculatedValue });
+    const resultData = { calculatedValue };
+    setResult(resultData);
+
+    const exportData = {
+      "Percentage (X%)": data.percentage,
+      "Total Value (Y)": data.totalValue,
+      "Result": calculatedValue.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   return (
@@ -111,7 +124,6 @@ export default function PercentageCalculatorForm({ calculatorName }: PercentageC
                           {form.getValues("percentage")}% of {form.getValues("totalValue")} is:
                         </TableCell>
                         <TableCell className="text-right font-bold">
-                          {/* If totalValue was a currency, you could use selectedCurrencySymbol here */}
                           {result.calculatedValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </TableCell>
                       </TableRow>

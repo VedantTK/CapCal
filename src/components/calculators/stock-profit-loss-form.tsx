@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
@@ -43,9 +43,10 @@ interface ProfitLossResult {
 
 interface StockProfitLossFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function StockProfitLossForm({ calculatorName }: StockProfitLossFormProps) {
+export default function StockProfitLossForm({ calculatorName, onResultUpdate }: StockProfitLossFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<ProfitLossResult | null>(null);
 
@@ -60,6 +61,12 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
     },
   });
 
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
+
   function onSubmit(data: ProfitLossFormValues) {
     const initialBuyCost = data.buyPrice * data.quantity;
     const totalBuyCost = initialBuyCost + (data.buyCommission || 0);
@@ -72,14 +79,29 @@ export default function StockProfitLossForm({ calculatorName }: StockProfitLossF
     
     const profitLossPercentage = totalBuyCost > 0 ? (netProfitLoss / totalBuyCost) * 100 : 0;
 
-    setResult({
+    const resultData = {
       totalBuyCost,
       totalSellValue,
       grossProfitLoss,
       netProfitLoss,
       profitLossPercentage,
       isProfit: netProfitLoss >= 0,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      "Buy Price per Share": data.buyPrice,
+      "Sell Price per Share": data.sellPrice,
+      "Quantity of Shares": data.quantity,
+      "Buy Commission": data.buyCommission || 0,
+      "Sell Commission": data.sellCommission || 0,
+      "Total Buy Cost": totalBuyCost.toFixed(2),
+      "Total Sell Value": totalSellValue.toFixed(2),
+      "Gross Profit/Loss": grossProfitLoss.toFixed(2),
+      "Net Profit/Loss": netProfitLoss.toFixed(2),
+      "Net Profit/Loss (%)": profitLossPercentage.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   return (

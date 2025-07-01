@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const stockAverageSchema = z.object({
@@ -37,9 +37,10 @@ interface StockAverageResult {
 
 interface StockAverageFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function StockAverageForm({ calculatorName }: StockAverageFormProps) {
+export default function StockAverageForm({ calculatorName, onResultUpdate }: StockAverageFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<StockAverageResult | null>(null);
 
@@ -53,6 +54,13 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
     },
   });
 
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
+
+
   function onSubmit(data: StockAverageFormValues) {
     let totalCost = data.firstBuyPrice * data.firstBuyQuantity;
     let totalQuantity = data.firstBuyQuantity;
@@ -63,11 +71,23 @@ export default function StockAverageForm({ calculatorName }: StockAverageFormPro
     }
 
     const averagePrice = totalCost / totalQuantity;
-    setResult({
+    const resultData = {
       averagePrice,
       totalQuantity,
       totalInvestment: totalCost,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      "First Buy Price": data.firstBuyPrice,
+      "First Buy Quantity": data.firstBuyQuantity,
+      "Second Buy Price": data.secondBuyPrice || 0,
+      "Second Buy Quantity": data.secondBuyQuantity || 0,
+      "Average Purchase Price": averagePrice.toFixed(2),
+      "Total Quantity": totalQuantity,
+      "Total Investment": totalCost.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   return (

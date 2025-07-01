@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -37,9 +37,10 @@ interface EmiResult {
 
 interface EmiCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function EmiCalculatorForm({ calculatorName }: EmiCalculatorFormProps) {
+export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: EmiCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<EmiResult | null>(null);
 
@@ -52,31 +53,47 @@ export default function EmiCalculatorForm({ calculatorName }: EmiCalculatorFormP
     },
   });
 
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
+
+
   function onSubmit(data: EmiFormValues) {
     const principal = data.loanAmount;
     const annualRate = data.annualInterestRate / 100;
     const monthlyRate = annualRate / 12;
     const numberOfMonths = data.loanTenureYears * 12;
 
+    let emi, totalPayment, totalInterest;
+
     if (monthlyRate === 0) { // Handle zero interest rate
-      const monthlyEmi = principal / numberOfMonths;
-       setResult({
-        monthlyEmi: monthlyEmi,
-        totalInterest: 0,
-        totalPayment: principal,
-      });
-      return;
+      emi = principal / numberOfMonths;
+      totalPayment = principal;
+      totalInterest = 0;
+    } else {
+      emi = principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfMonths) / (Math.pow(1 + monthlyRate, numberOfMonths) - 1);
+      totalPayment = emi * numberOfMonths;
+      totalInterest = totalPayment - principal;
     }
-
-    const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfMonths) / (Math.pow(1 + monthlyRate, numberOfMonths) - 1);
-    const totalPayment = emi * numberOfMonths;
-    const totalInterest = totalPayment - principal;
-
-    setResult({
+    
+    const resultData = {
       monthlyEmi: emi,
       totalInterest: totalInterest,
       totalPayment: totalPayment,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      "Loan Amount": principal,
+      "Annual Interest Rate (%)": data.annualInterestRate,
+      "Loan Tenure (Years)": data.loanTenureYears,
+      "Monthly EMI": emi.toFixed(2),
+      "Total Interest Payable": totalInterest.toFixed(2),
+      "Total Payment (Principal + Interest)": totalPayment.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
   
   const tenureOptions = Array.from({ length: 30 }, (_, i) => i + 1);

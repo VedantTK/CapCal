@@ -2,7 +2,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -58,9 +58,10 @@ interface SipResult {
 
 interface SipCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormProps) {
+export default function SipCalculatorForm({ calculatorName, onResultUpdate }: SipCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<SipResult | null>(null);
 
@@ -76,6 +77,12 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
   });
 
   const investmentType = form.watch("investmentType");
+  const formValues = form.watch();
+
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
 
   function onSubmit(data: SipFormValues) {
     let totalValue = 0;
@@ -97,12 +104,24 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
     }
 
     const estimatedReturns = totalValue - investedAmount;
-    setResult({
+    const resultData = {
       investedAmount,
       estimatedReturns,
       totalValue,
       investmentType: data.investmentType,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      'Investment Type': data.investmentType,
+      'Investment Amount': data.investmentType === 'sip' ? data.monthlyInvestment : data.lumpsumAmount,
+      'Expected Annual Return Rate (%)': data.annualReturnRate,
+      'Time Period (Years)': data.timePeriod,
+      'Total Amount Invested': investedAmount.toFixed(2),
+      'Estimated Returns': estimatedReturns.toFixed(2),
+      'Projected Total Value': totalValue.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   const timePeriodOptions = Array.from({ length: 50 }, (_, i) => i + 1);
@@ -126,13 +145,11 @@ export default function SipCalculatorForm({ calculatorName }: SipCalculatorFormP
                     <RadioGroup
                       onValueChange={(value) => {
                         field.onChange(value);
-                        // Reset other field when type changes to avoid validation errors on stale data
                         if (value === "sip") {
                           form.setValue("lumpsumAmount", undefined);
                         } else {
                           form.setValue("monthlyInvestment", undefined);
                         }
-                        setResult(null); // Clear previous results
                       }}
                       defaultValue={field.value}
                       className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"

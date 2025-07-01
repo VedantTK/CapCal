@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const cagrSchema = z.object({
@@ -37,9 +37,10 @@ interface CagrResult {
 
 interface CagrCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function CagrCalculatorForm({ calculatorName }: CagrCalculatorFormProps) {
+export default function CagrCalculatorForm({ calculatorName, onResultUpdate }: CagrCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<CagrResult | null>(null);
 
@@ -52,10 +53,25 @@ export default function CagrCalculatorForm({ calculatorName }: CagrCalculatorFor
     },
   });
 
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
+
   function onSubmit(data: CagrFormValues) {
     const { initialValue, finalValue, timePeriod } = data;
     const cagrValue = (Math.pow(finalValue / initialValue, 1 / timePeriod) - 1) * 100;
-    setResult({ cagr: cagrValue });
+    const resultData = { cagr: cagrValue };
+    setResult(resultData);
+
+    const exportData = {
+      "Initial Investment Value": initialValue,
+      "Final Investment Value": finalValue,
+      "Time Period (Years)": timePeriod,
+      "CAGR (%)": cagrValue.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
 
   return (

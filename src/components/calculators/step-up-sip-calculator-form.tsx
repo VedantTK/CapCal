@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCurrency } from "@/contexts/currency-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -38,9 +38,10 @@ interface StepUpSipResult {
 
 interface StepUpSipCalculatorFormProps {
   calculatorName: string;
+  onResultUpdate: (data: Record<string, any> | null) => void;
 }
 
-export default function StepUpSipCalculatorForm({ calculatorName }: StepUpSipCalculatorFormProps) {
+export default function StepUpSipCalculatorForm({ calculatorName, onResultUpdate }: StepUpSipCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<StepUpSipResult | null>(null);
 
@@ -53,6 +54,12 @@ export default function StepUpSipCalculatorForm({ calculatorName }: StepUpSipCal
       timePeriodYears: 10,
     },
   });
+
+  const formValues = form.watch();
+  useEffect(() => {
+    setResult(null);
+    onResultUpdate(null);
+  }, [formValues, onResultUpdate]);
 
   function onSubmit(data: StepUpSipFormValues) {
     let totalInvestedAmount = 0;
@@ -73,11 +80,23 @@ export default function StepUpSipCalculatorForm({ calculatorName }: StepUpSipCal
     
     const estimatedReturns = futureValue - totalInvestedAmount;
 
-    setResult({
+    const resultData = {
       totalInvested: totalInvestedAmount,
       estimatedReturns,
       totalValue: futureValue,
-    });
+    };
+    setResult(resultData);
+
+    const exportData = {
+      "Initial Monthly Investment": data.initialMonthlyInvestment,
+      "Annual Step-up (%)": data.annualStepUpPercentage,
+      "Expected Annual Return (%)": data.annualReturnRate,
+      "Time Period (Years)": data.timePeriodYears,
+      "Total Amount Invested": totalInvestedAmount.toFixed(2),
+      "Estimated Returns": estimatedReturns.toFixed(2),
+      "Projected Total Value": futureValue.toFixed(2),
+    };
+    onResultUpdate(exportData);
   }
   
   const timePeriodOptions = Array.from({ length: 50 }, (_, i) => i + 1);
