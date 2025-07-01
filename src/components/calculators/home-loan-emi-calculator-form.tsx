@@ -144,12 +144,16 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
     setResult(resultData);
 
     const exportData = {
-      "Loan Amount": principal,
-      "Annual Interest Rate (%)": data.annualInterestRate,
-      "Loan Tenure (Years)": data.loanTenureYears,
-      "Monthly EMI": emi.toFixed(2),
-      "Total Interest Payable": totalInterest.toFixed(2),
-      "Total Payment (Principal + Interest)": totalPayment.toFixed(2),
+      summary: {
+        "Loan Amount": principal,
+        "Annual Interest Rate (%)": data.annualInterestRate,
+        "Loan Tenure (Years)": data.loanTenureYears,
+        "Monthly EMI": emi.toFixed(2),
+        "Total Interest Payable": totalInterest.toFixed(2),
+        "Total Payment (Principal + Interest)": totalPayment.toFixed(2),
+      },
+      yearlySchedule: yearlySchedule,
+      monthlySchedule: monthlySchedule,
     };
     onResultUpdate(exportData);
   }
@@ -293,9 +297,10 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead className="w-[100px]">Month</TableHead>
+                                                <TableHead className="w-[80px]">Month</TableHead>
                                                 <TableHead className="text-right">Principal Paid</TableHead>
                                                 <TableHead className="text-right">Interest Paid</TableHead>
+                                                <TableHead className="text-right">Total Payment</TableHead>
                                                 <TableHead className="text-right">Ending Balance</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -305,6 +310,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                                     <TableCell>{row.month}</TableCell>
                                                     <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                                     <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                                     <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                                 </TableRow>
                                             ))}

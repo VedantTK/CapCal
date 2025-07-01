@@ -15,19 +15,62 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
   const handleExportCsv = () => {
     if (!resultData) return;
 
-    const headers = Object.keys(resultData);
-    const values = Object.values(resultData).map(val => {
-      // Handle potential commas in string values by wrapping them in quotes
-      if (typeof val === 'string' && val.includes(',')) {
-        return `"${val}"`;
-      }
-      return val;
-    });
+    let csvContent = '';
 
-    const csvContent = [
-      headers.join(','),
-      values.join(',')
-    ].join('\n');
+    const escapeCsvCell = (cell: any) => {
+        if (cell === undefined || cell === null) return '';
+        const cellStr = String(cell);
+        // If the cell contains a comma, a double quote, or a newline, wrap it in double quotes.
+        // Also, double up any existing double quotes.
+        if (/[",\n]/.test(cellStr)) {
+            return `"${cellStr.replace(/"/g, '""')}"`;
+        }
+        return cellStr;
+    };
+    
+    const arrayToCsv = (data: Record<string, any>[]) => {
+      if (!data || data.length === 0) return '';
+      const headers = Object.keys(data[0]);
+      const rows = data.map(obj => 
+        headers.map(header => escapeCsvCell(obj[header])).join(',')
+      );
+      return [headers.join(','), ...rows].join('\n');
+    };
+    
+    // New structure for EMI/Home Loan calculators with amortization schedules
+    if (resultData.summary && (resultData.yearlySchedule || resultData.monthlySchedule)) {
+      
+      const summaryCsv = 'Description,Value\n' + Object.entries(resultData.summary).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
+      csvContent += summaryCsv + '\n\n';
+
+      if (resultData.yearlySchedule && resultData.yearlySchedule.length > 0) {
+        csvContent += 'Yearly Amortization Schedule\n';
+        const yearlyDataForCsv = resultData.yearlySchedule.map((row: any) => ({
+          'Year': row.year,
+          'Principal Paid': row.principal.toFixed(2),
+          'Interest Paid': row.interest.toFixed(2),
+          'Ending Balance': row.endingBalance.toFixed(2),
+        }));
+        csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
+      }
+      
+      if (resultData.monthlySchedule && resultData.monthlySchedule.length > 0) {
+        csvContent += 'Monthly Amortization Schedule\n';
+        const monthlyDataForCsv = resultData.monthlySchedule.map((row: any) => ({
+          'Month': row.month,
+          'Principal Paid': row.principal.toFixed(2),
+          'Interest Paid': row.interest.toFixed(2),
+          'Total Payment': row.totalPayment.toFixed(2),
+          'Ending Balance': row.endingBalance.toFixed(2),
+        }));
+        csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
+      }
+
+    } else { // Fallback for other calculators
+      const headers = Object.keys(resultData);
+      const values = Object.values(resultData).map(val => escapeCsvCell(val));
+      csvContent = [headers.join(','), values.join(',')].join('\n');
+    }
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
