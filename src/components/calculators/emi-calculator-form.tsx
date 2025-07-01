@@ -20,6 +20,8 @@ import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const emiSchema = z.object({
   loanAmount: z.coerce.number().positive("Loan amount must be positive."),
@@ -29,10 +31,27 @@ const emiSchema = z.object({
 
 type EmiFormValues = z.infer<typeof emiSchema>;
 
+interface MonthlyAmortizationDetail {
+  month: number;
+  principal: number;
+  interest: number;
+  totalPayment: number;
+  endingBalance: number;
+}
+
+interface YearlyAmortizationDetail {
+  year: number;
+  principal: number;
+  interest: number;
+  endingBalance: number;
+}
+
 interface EmiResult {
   monthlyEmi: number;
   totalInterest: number;
   totalPayment: number;
+  monthlySchedule: MonthlyAmortizationDetail[];
+  yearlySchedule: YearlyAmortizationDetail[];
 }
 
 interface EmiCalculatorFormProps {
@@ -77,11 +96,49 @@ export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: Em
       totalPayment = emi * numberOfMonths;
       totalInterest = totalPayment - principal;
     }
+
+    const monthlySchedule: MonthlyAmortizationDetail[] = [];
+    const yearlySchedule: YearlyAmortizationDetail[] = [];
+    let beginningBalance = principal;
+    let yearlyPrincipal = 0;
+    let yearlyInterest = 0;
+
+    for (let i = 1; i <= numberOfMonths; i++) {
+      const interestPayment = beginningBalance * monthlyRate;
+      const principalPayment = emi - interestPayment;
+      const endingBalance = beginningBalance - principalPayment;
+
+      monthlySchedule.push({
+        month: i,
+        principal: principalPayment,
+        interest: interestPayment,
+        totalPayment: emi,
+        endingBalance: endingBalance,
+      });
+
+      yearlyPrincipal += principalPayment;
+      yearlyInterest += interestPayment;
+
+      if (i % 12 === 0 || i === numberOfMonths) {
+        yearlySchedule.push({
+          year: Math.ceil(i / 12),
+          principal: yearlyPrincipal,
+          interest: yearlyInterest,
+          endingBalance: endingBalance,
+        });
+        yearlyPrincipal = 0;
+        yearlyInterest = 0;
+      }
+      
+      beginningBalance = endingBalance;
+    }
     
     const resultData = {
       monthlyEmi: emi,
       totalInterest: totalInterest,
       totalPayment: totalPayment,
+      monthlySchedule,
+      yearlySchedule,
     };
     setResult(resultData);
 
@@ -103,7 +160,7 @@ export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: Em
     <Card>
       <CardHeader>
         <CardTitle>{calculatorName}</CardTitle>
-        <CardDescription>Calculate your Equated Monthly Installment (EMI) for loans.</CardDescription>
+        <CardDescription>Calculate your Equated Monthly Installment (EMI) for loans and see the full amortization schedule.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -189,6 +246,76 @@ export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: Em
                       </TableRow>
                     </TableBody>
                   </Table>
+
+                  <Tabs defaultValue="yearly" className="w-full mt-6">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
+                      <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="yearly">
+                      <Card>
+                        <CardHeader>
+                            <CardTitle>Yearly Amortization Schedule</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ScrollArea className="h-72">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Year</TableHead>
+                                            <TableHead className="text-right">Principal Paid</TableHead>
+                                            <TableHead className="text-right">Interest Paid</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.yearlySchedule.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell>{row.year}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </ScrollArea>
+                        </CardContent>
+                      </Card>
+                    </TabsContent>
+                    <TabsContent value="monthly">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Monthly Amortization Schedule</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <ScrollArea className="h-72">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-[100px]">Month</TableHead>
+                                                <TableHead className="text-right">Principal Paid</TableHead>
+                                                <TableHead className="text-right">Interest Paid</TableHead>
+                                                <TableHead className="text-right">Ending Balance</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {result.monthlySchedule.map((row) => (
+                                                <TableRow key={row.month}>
+                                                    <TableCell>{row.month}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </ScrollArea>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                  </Tabs>
+
                 </CardContent>
               </Card>
             )}
