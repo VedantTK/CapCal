@@ -77,12 +77,19 @@ export default function SipCalculatorForm({ calculatorName, onResultUpdate }: Si
   });
 
   const investmentType = form.watch("investmentType");
-  const formValues = form.watch();
+  
+  // Watch all relevant fields to reset result on change
+  const [monthlyInvestment, lumpsumAmount, annualReturnRate, timePeriod] = form.watch([
+      "monthlyInvestment",
+      "lumpsumAmount",
+      "annualReturnRate",
+      "timePeriod"
+  ]);
 
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [investmentType, monthlyInvestment, lumpsumAmount, annualReturnRate, timePeriod, onResultUpdate]);
 
   function onSubmit(data: SipFormValues) {
     let totalValue = 0;

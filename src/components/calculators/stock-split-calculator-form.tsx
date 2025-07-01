@@ -57,11 +57,11 @@ export default function StockSplitCalculatorForm({ calculatorName, onResultUpdat
     },
   });
 
-  const formValues = form.watch();
+  const [currentShares, currentPrice, splitRatioNew, splitRatioOld] = form.watch(['currentShares', 'currentPrice', 'splitRatioNew', 'splitRatioOld']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [currentShares, currentPrice, splitRatioNew, splitRatioOld, onResultUpdate]);
 
   function onSubmit(data: StockSplitFormValues) {
     const { currentShares, currentPrice, splitRatioNew, splitRatioOld } = data;

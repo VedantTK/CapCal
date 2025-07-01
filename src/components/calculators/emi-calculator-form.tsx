@@ -53,11 +53,11 @@ export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: Em
     },
   });
 
-  const formValues = form.watch();
+  const [loanAmount, annualInterestRate, loanTenureYears] = form.watch(['loanAmount', 'annualInterestRate', 'loanTenureYears']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [loanAmount, annualInterestRate, loanTenureYears, onResultUpdate]);
 
 
   function onSubmit(data: EmiFormValues) {

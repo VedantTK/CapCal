@@ -45,11 +45,11 @@ export default function PercentageCalculatorForm({ calculatorName, onResultUpdat
     },
   });
 
-  const formValues = form.watch();
+  const [percentage, totalValue] = form.watch(['percentage', 'totalValue']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [percentage, totalValue, onResultUpdate]);
 
 
   function onSubmit(data: PercentageFormValues) {

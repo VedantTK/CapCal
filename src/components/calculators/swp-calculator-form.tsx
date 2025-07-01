@@ -56,11 +56,11 @@ export default function SwpCalculatorForm({ calculatorName, onResultUpdate }: Sw
     },
   });
 
-  const formValues = form.watch();
+  const [totalInvestment, monthlyWithdrawal, annualReturnRate, investmentPeriodYears] = form.watch(['totalInvestment', 'monthlyWithdrawal', 'annualReturnRate', 'investmentPeriodYears']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [totalInvestment, monthlyWithdrawal, annualReturnRate, investmentPeriodYears, onResultUpdate]);
 
 
   function onSubmit(data: SwpFormValues) {

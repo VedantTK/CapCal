@@ -54,11 +54,11 @@ export default function StockAverageForm({ calculatorName, onResultUpdate }: Sto
     },
   });
 
-  const formValues = form.watch();
+  const [firstBuyPrice, firstBuyQuantity, secondBuyPrice, secondBuyQuantity] = form.watch(['firstBuyPrice', 'firstBuyQuantity', 'secondBuyPrice', 'secondBuyQuantity']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [firstBuyPrice, firstBuyQuantity, secondBuyPrice, secondBuyQuantity, onResultUpdate]);
 
 
   function onSubmit(data: StockAverageFormValues) {

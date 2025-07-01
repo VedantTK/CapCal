@@ -53,11 +53,11 @@ export default function CagrCalculatorForm({ calculatorName, onResultUpdate }: C
     },
   });
 
-  const formValues = form.watch();
+  const [initialValue, finalValue, timePeriod] = form.watch(['initialValue', 'finalValue', 'timePeriod']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [initialValue, finalValue, timePeriod, onResultUpdate]);
 
   function onSubmit(data: CagrFormValues) {
     const { initialValue, finalValue, timePeriod } = data;

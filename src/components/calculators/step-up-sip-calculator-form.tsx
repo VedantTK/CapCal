@@ -55,11 +55,11 @@ export default function StepUpSipCalculatorForm({ calculatorName, onResultUpdate
     },
   });
 
-  const formValues = form.watch();
+  const [initialMonthlyInvestment, annualStepUpPercentage, annualReturnRate, timePeriodYears] = form.watch(['initialMonthlyInvestment', 'annualStepUpPercentage', 'annualReturnRate', 'timePeriodYears']);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [initialMonthlyInvestment, annualStepUpPercentage, annualReturnRate, timePeriodYears, onResultUpdate]);
 
   function onSubmit(data: StepUpSipFormValues) {
     let totalInvestedAmount = 0;

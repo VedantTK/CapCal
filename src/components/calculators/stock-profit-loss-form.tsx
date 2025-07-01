@@ -61,11 +61,17 @@ export default function StockProfitLossForm({ calculatorName, onResultUpdate }: 
     },
   });
 
-  const formValues = form.watch();
+  const [buyPrice, sellPrice, quantity, buyCommission, sellCommission] = form.watch([
+    "buyPrice", 
+    "sellPrice", 
+    "quantity", 
+    "buyCommission", 
+    "sellCommission"
+  ]);
   useEffect(() => {
     setResult(null);
     onResultUpdate(null);
-  }, [formValues, onResultUpdate]);
+  }, [buyPrice, sellPrice, quantity, buyCommission, sellCommission, onResultUpdate]);
 
   function onSubmit(data: ProfitLossFormValues) {
     const initialBuyCost = data.buyPrice * data.quantity;
