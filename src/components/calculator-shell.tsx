@@ -20,8 +20,6 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
     const escapeCsvCell = (cell: any) => {
         if (cell === undefined || cell === null) return '';
         const cellStr = String(cell);
-        // If the cell contains a comma, a double quote, or a newline, wrap it in double quotes.
-        // Also, double up any existing double quotes.
         if (/[",\n]/.test(cellStr)) {
             return `"${cellStr.replace(/"/g, '""')}"`;
         }
@@ -37,13 +35,44 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
       return [headers.join(','), ...rows].join('\n');
     };
     
-    // New structure for complex calculators with summary and breakdowns
-    if (resultData.summary && (resultData.yearlySchedule || resultData.monthlySchedule || resultData.yearlyBreakdown)) {
+    // Handle complex home loan EMI with savings calculation
+    if (resultData.summary && resultData.savingsSummary) {
+      const originalSummaryCsv = 'Description,Value\n' + Object.entries(resultData.summary).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
+      csvContent += 'Original Loan Projection\n' + originalSummaryCsv + '\n\n';
+
+      const savingsSummaryCsv = 'Description,Value\n' + Object.entries(resultData.savingsSummary).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
+      csvContent += 'With Prepayment Projection\n' + savingsSummaryCsv + '\n\n';
       
+      const savingsDetailsCsv = 'Description,Value\n' + Object.entries(resultData.savingsDetails).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
+      csvContent += 'Your Savings\n' + savingsDetailsCsv + '\n\n';
+
+      if (resultData.newYearlySchedule && resultData.newYearlySchedule.length > 0) {
+        csvContent += 'New Yearly Amortization Schedule\n';
+        const yearlyDataForCsv = resultData.newYearlySchedule.map((row: any) => ({
+          'Year': row.year,
+          'Principal Paid': row.principal.toFixed(2),
+          'Interest Paid': row.interest.toFixed(2),
+          'Ending Balance': row.endingBalance.toFixed(2),
+        }));
+        csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
+      }
+       if (resultData.newMonthlySchedule && resultData.newMonthlySchedule.length > 0) {
+        csvContent += 'New Monthly Amortization Schedule\n';
+        const monthlyDataForCsv = resultData.newMonthlySchedule.map((row: any) => ({
+          'Month': row.month,
+          'Principal Paid': row.principal.toFixed(2),
+          'Interest Paid': row.interest.toFixed(2),
+          'Total Payment': row.totalPayment.toFixed(2),
+          'Ending Balance': row.endingBalance.toFixed(2),
+        }));
+        csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
+      }
+
+    } else if (resultData.summary && (resultData.yearlySchedule || resultData.monthlySchedule || resultData.yearlyBreakdown)) {
+      // Handle standard complex calculators
       const summaryCsv = 'Description,Value\n' + Object.entries(resultData.summary).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
       csvContent += summaryCsv + '\n\n';
 
-      // For EMI / Home Loan
       if (resultData.yearlySchedule && resultData.yearlySchedule.length > 0) {
         csvContent += 'Yearly Amortization Schedule\n';
         const yearlyDataForCsv = resultData.yearlySchedule.map((row: any) => ({
@@ -55,7 +84,6 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
         csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
       }
       
-      // For EMI / Home Loan
       if (resultData.monthlySchedule && resultData.monthlySchedule.length > 0) {
         csvContent += 'Monthly Amortization Schedule\n';
         const monthlyDataForCsv = resultData.monthlySchedule.map((row: any) => ({
@@ -68,7 +96,6 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
         csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
       }
 
-      // For Step-up SIP
       if (resultData.yearlyBreakdown && resultData.yearlyBreakdown.length > 0) {
         csvContent += 'Yearly SIP Amount Breakdown\n';
         const sipDataForCsv = resultData.yearlyBreakdown.map((row: any) => ({
@@ -78,7 +105,7 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
         csvContent += arrayToCsv(sipDataForCsv) + '\n\n';
       }
 
-    } else { // Fallback for other calculators
+    } else { // Fallback for simple calculators
       const headers = Object.keys(resultData);
       const values = Object.values(resultData).map(val => escapeCsvCell(val));
       csvContent = [headers.join(','), values.join(',')].join('\n');
