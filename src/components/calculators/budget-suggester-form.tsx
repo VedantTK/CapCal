@@ -18,8 +18,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Home, Lightbulb, Car, UtensilsCrossed, ShieldAlert, Clapperboard, Smartphone, Repeat, ShieldCheck, Wrench, PiggyBank } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Home, Lightbulb, Car, UtensilsCrossed, ShieldAlert, Clapperboard, Smartphone, Repeat, ShieldCheck, Wrench, PiggyBank, Trash2, Info } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const budgetSuggesterSchema = z.object({
   monthlySalary: z.coerce.number().positive("Monthly salary must be positive."),
@@ -50,12 +52,12 @@ const budgetCategories = [
     { category: 'Insurance', percentage: 0.0378, icon: ShieldCheck },
     { category: 'Phone & Internet', percentage: 0.0278, icon: Smartphone },
     { category: 'Subscriptions', percentage: 0.0128, icon: Repeat },
-    { category: 'Miscellaneous', percentage: 0.0411, icon: Wrench }, // This will be adjusted to ensure total is 100%
+    { category: 'Miscellaneous', percentage: 0.0411, icon: Wrench },
 ];
 
 export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: BudgetSuggesterFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
-  const [result, setResult] = useState<BudgetItem[] | null>(null);
+  const [editableBudget, setEditableBudget] = useState<BudgetItem[] | null>(null);
 
   const form = useForm<BudgetSuggesterFormValues>({
     resolver: zodResolver(budgetSuggesterSchema),
@@ -66,15 +68,26 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
 
   const formValues = form.watch();
   useEffect(() => {
-    setResult(null);
-    onResultUpdate(null);
-  }, [JSON.stringify(formValues), onResultUpdate]);
+    setEditableBudget(null);
+  }, [JSON.stringify(formValues)]);
+  
+  useEffect(() => {
+    if (editableBudget && form.getValues("monthlySalary")) {
+        const exportData = editableBudget.reduce((acc, item) => {
+            acc[item.category] = item.amount.toFixed(2);
+            return acc;
+        }, {} as Record<string, string>);
+        exportData["Total Amount"] = (form.getValues("monthlySalary") || 0).toFixed(2);
+        onResultUpdate(exportData);
+    } else {
+        onResultUpdate(null);
+    }
+  }, [editableBudget, form, onResultUpdate]);
 
   function onSubmit(data: BudgetSuggesterFormValues) {
     const { monthlySalary } = data;
     let runningTotal = 0;
 
-    // Sort categories to ensure 'Miscellaneous' is last for adjustment calculation
     const sortedCategories = [...budgetCategories].sort((a, b) => {
         if (a.category === 'Miscellaneous') return 1;
         if (b.category === 'Miscellaneous') return -1;
@@ -91,30 +104,41 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
     const lastAmount = monthlySalary - runningTotal;
     calculatedItems.push({ ...lastCategory, amount: lastAmount });
     
-    // Now create the final result with percentages, unsorted
     const resultData = calculatedItems.map(item => ({
         ...item,
         percentage: (item.amount / monthlySalary) * 100
     }));
 
-    setResult(resultData);
-
-    const exportData = resultData.reduce((acc, item) => {
-        acc[item.category] = item.amount.toFixed(2);
-        return acc;
-    }, {} as Record<string, string>);
-    exportData["Total Amount"] = monthlySalary.toFixed(2);
-    
-    onResultUpdate(exportData);
+    setEditableBudget(resultData);
   }
 
-  const totalCalculated = result?.reduce((sum, item) => sum + item.amount, 0) ?? 0;
+  const handleAmountChange = (category: string, value: string) => {
+      const newAmount = parseFloat(value) || 0;
+      const monthlySalary = form.getValues("monthlySalary");
+      if (!monthlySalary) return;
+
+      setEditableBudget(prev => 
+          prev!.map(item => 
+              item.category === category 
+              ? { ...item, amount: newAmount, percentage: (newAmount / monthlySalary) * 100 } 
+              : item
+          )
+      );
+  };
+
+  const handleRemoveCategory = (category: string) => {
+      setEditableBudget(prev => prev!.filter(item => item.category !== category));
+  };
+  
+  const monthlySalary = form.getValues("monthlySalary");
+  const totalAllocated = editableBudget?.reduce((sum, item) => sum + item.amount, 0) ?? 0;
+  const unallocatedAmount = monthlySalary - totalAllocated;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{calculatorName}</CardTitle>
-        <CardDescription>Get a personalized budget breakdown based on your income.</CardDescription>
+        <CardDescription>Get a personalized budget breakdown based on your income, then adjust it to fit your needs.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -140,38 +164,73 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
               Calculate Budget
             </Button>
 
-            {result && (
+            {editableBudget && (
               <Card className="w-full bg-muted/50">
                 <CardHeader>
                     <CardTitle>Your Personalized Budget Plan</CardTitle>
+                    <CardDescription>This is a starting point. Feel free to edit amounts or remove categories to match your lifestyle.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Category</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="text-right w-[100px]">Percentage</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {result.map(item => (
-                        <TableRow key={item.category}>
-                          <TableCell className="font-medium flex items-center gap-2">
-                            <item.icon className="h-4 w-4 text-muted-foreground" />
-                            {item.category}
-                          </TableCell>
-                          <TableCell className="text-right">{selectedCurrencySymbol}{item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                          <TableCell className="text-right">{item.percentage.toFixed(2)}%</TableCell>
+                <CardContent className="space-y-4">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Category</TableHead>
+                          <TableHead className="w-[150px]">Amount</TableHead>
+                          <TableHead className="text-right w-[100px]">Percentage</TableHead>
+                          <TableHead className="text-right w-[60px]">Actions</TableHead>
                         </TableRow>
-                      ))}
-                      <TableRow className="font-bold border-t-2 border-primary">
-                          <TableCell>Total</TableCell>
-                          <TableCell className="text-right">{selectedCurrencySymbol}{totalCalculated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                          <TableCell className="text-right">{((totalCalculated/form.getValues("monthlySalary"))*100).toFixed(2)}%</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {editableBudget.map(item => (
+                          <TableRow key={item.category}>
+                            <TableCell className="font-medium flex items-center gap-2">
+                              <item.icon className="h-4 w-4 text-muted-foreground" />
+                              {item.category}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center">
+                                <span className="mr-1 text-muted-foreground">{selectedCurrencySymbol}</span>
+                                <Input 
+                                  type="number" 
+                                  value={item.amount.toFixed(2)}
+                                  onChange={(e) => handleAmountChange(item.category, e.target.value)}
+                                  className="h-8"
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">{item.percentage.toFixed(2)}%</TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="icon" onClick={() => handleRemoveCategory(item.category)} className="h-8 w-8">
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                                <span className="sr-only">Remove {item.category}</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="font-bold border-t-2 border-primary">
+                            <TableCell>Total Allocated</TableCell>
+                            <TableCell className="text-right" colSpan={2}>{selectedCurrencySymbol}{totalAllocated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                            <TableCell />
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  <Alert variant={Math.abs(unallocatedAmount) > 0.01 ? (unallocatedAmount > 0 ? 'default' : 'destructive') : 'default'} className={cn(unallocatedAmount > 0.01 && "border-blue-500/50 bg-blue-50 dark:bg-blue-900/30")}>
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>
+                        {unallocatedAmount > 0.01 && `Unallocated Funds: ${selectedCurrencySymbol}${unallocatedAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
+                        {unallocatedAmount < -0.01 && `Over-allocated by: ${selectedCurrencySymbol}${Math.abs(unallocatedAmount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
+                        {Math.abs(unallocatedAmount) <= 0.01 && "All Funds Allocated"}
+                    </AlertTitle>
+                    <AlertDescription>
+                        {unallocatedAmount > 0.01 && "You have money left to assign. Consider putting it towards your investments or savings!"}
+                        {unallocatedAmount < -0.01 && "Your budget exceeds your salary. Please adjust the amounts."}
+                        {Math.abs(unallocatedAmount) <= 0.01 && "Great job! Your budget matches your salary."}
+                    </AlertDescription>
+                  </Alert>
+
                 </CardContent>
               </Card>
             )}
