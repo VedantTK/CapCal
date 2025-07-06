@@ -4,77 +4,91 @@
 
 @layer base {
   :root {
-    --background: 190 67% 93%; /* Light blue #E0F7FA */
-    --foreground: 240 10% 3.9%; /* Darker Gray for general text */
+    --background: 210 20% 98%; /* Softer white with slight blue tint */
+    --foreground: 222 84% 4.9%; /* Deep navy for text */
 
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 240 10% 3.9%;
+    --card: 0 0% 100%; /* Pure white for cards */
+    --card-foreground: 222 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 222 84% 4.9%;
 
-    --primary: 197 75% 52%; /* Vibrant blue #29ABE2 */
-    --primary-foreground: 0 0% 100%; /* White */
+    --primary: 221 83% 53%; /* Professional blue */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 210 40% 96%; /* Light blue-gray */
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 120 73% 75%; /* Green #90EE90 */
-    --accent-foreground: 240 5.9% 10%; /* Dark text for good contrast on light green */
+    --accent: 142 76% 36%; /* Professional green for gains */
+    --accent-foreground: 355 7% 97%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%; /* Red for losses */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 197 75% 52%; /* Using primary color for ring */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 221 83% 53%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 48 96% 53%;
+    --chart-4: 262 83% 58%;
+    --chart-5: 0 84% 60%;
+
+    /* Finance-specific colors */
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+    --profit: 142 76% 36%;
+    --loss: 0 84% 60%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 222 84% 4.9%; /* Dark navy */
+    --foreground: 210 40% 98%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 197 75% 52%; 
-    --primary-foreground: 0 0% 100%;
+    --primary: 217 91% 60%; /* Brighter blue for dark mode */
+    --primary-foreground: 222 84% 4.9%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 120 73% 75%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 197 75% 52%;
-    
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 224 71% 4%;
+
+    --chart-1: 217 91% 60%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 48 96% 53%;
+    --chart-4: 262 83% 58%;
+    --chart-5: 0 84% 60%;
+
+    /* Finance-specific colors for dark mode */
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --info: 199 89% 48%;
+    --profit: 142 76% 36%;
+    --loss: 0 84% 60%;
   }
 }
 
@@ -84,5 +98,176 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Finance-specific utility classes */
+  .profit-text {
+    @apply text-green-600 dark:text-green-400;
+  }
+  
+  .loss-text {
+    @apply text-red-600 dark:text-red-400;
+  }
+  
+  .neutral-text {
+    @apply text-muted-foreground;
+  }
+  
+  .finance-card {
+    @apply bg-gradient-to-br from-white to-blue-50/30 dark:from-card dark:to-blue-950/20 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .metric-card {
+    @apply bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-lg p-4;
+  }
+  
+  .calculator-grid {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+  
+  .form-section {
+    @apply space-y-6 p-6 bg-card rounded-lg border border-border/50 shadow-sm;
+  }
+  
+  .result-section {
+    @apply bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 border border-primary/20 rounded-lg p-6 space-y-4;
+  }
+  
+  /* Enhanced button styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-gradient-to-r from-secondary to-secondary/90 hover:from-secondary/90 hover:to-secondary text-secondary-foreground border border-border/50 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  /* Typography enhancements */
+  .heading-primary {
+    @apply text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+  
+  .heading-secondary {
+    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-foreground;
+  }
+  
+  .text-financial {
+    @apply font-mono text-lg font-semibold tabular-nums;
+  }
+  
+  /* Animation utilities */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+  
+  /* Enhanced focus states */
+  .focus-enhanced:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background outline-none;
+  }
+  
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary/30;
+  }
+  
+  /* Financial data table styles */
+  .financial-table {
+    @apply w-full border-collapse;
+  }
+  
+  .financial-table th {
+    @apply bg-muted/50 font-semibold text-left p-3 border-b border-border;
+  }
+  
+  .financial-table td {
+    @apply p-3 border-b border-border/50;
+  }
+  
+  .financial-table tr:hover {
+    @apply bg-muted/30;
+  }
+}
+
+/* Custom number input styling */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Enhanced form styling */
+.form-field {
+  @apply relative;
+}
+
+.form-field input:focus + label,
+.form-field input:not(:placeholder-shown) + label {
+  @apply transform -translate-y-2 scale-75 text-primary;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  .heading-primary {
+    @apply text-2xl;
+  }
+  
+  .heading-secondary {
+    @apply text-xl;
   }
 }
