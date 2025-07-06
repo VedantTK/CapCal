@@ -1,53 +1,49 @@
-# Dockerfile for a production Next.js app
-
-# ---- Base ----
-# Use a specific version of Node.js for reproducibility.
-# Alpine versions are smaller and good for production.
-FROM node:20-alpine AS base
+# Stage 1: Install dependencies
+# We use node:20-slim as it's smaller than the full node image.
+FROM node:20-slim AS deps
 WORKDIR /app
 
-# ---- Dependencies ----
-# Install dependencies in a separate stage to leverage Docker's layer caching.
-# This layer is only rebuilt when package.json or package-lock.json changes.
-FROM base AS deps
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Copy package.json and install dependencies. This layer is cached
+# unless package.json changes.
+COPY package.json ./
+RUN npm install
 
-# ---- Builder ----
-# Build the application. This stage uses the installed dependencies.
-FROM base AS builder
+# Stage 2: Build the application
+FROM node:20-slim AS builder
+WORKDIR /app
+# Copy dependencies from the previous stage
 COPY --from=deps /app/node_modules ./node_modules
+# Copy the rest of the application code
 COPY . .
 
-# Set build-time environment variables if any are needed
-# ENV NEXT_PUBLIC_API_URL=https://api.example.com
-
+# Run the build script which will leverage the "output: 'standalone'"
+# in next.config.ts
 RUN npm run build
 
-# ---- Runner ----
-# The final, small production image.
-# It uses the same Node.js Alpine base for consistency.
-FROM base AS runner
+# Stage 3: Production image
+FROM node:20-slim AS runner
 WORKDIR /app
 
-# The node:20-alpine image already includes a non-root 'node' user.
-# We'll use this user to run our application for better security.
-USER node
+ENV NODE_ENV=production
 
-# Copy the essential build output from the builder stage.
-# The 'standalone' output mode bundles only the necessary files.
-COPY --from=builder --chown=node:node /app/public ./public
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+# Create a non-root user and group for security reasons.
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Expose the port the app will run on.
+# Copy the standalone output from the builder stage.
+COPY --from=builder --chown=nextjs:nodejs ./.next/standalone ./
+# Copy the public folder from the builder stage.
+COPY --from=builder --chown=nextjs:nodejs ./public ./public
+# Copy the static assets from the builder stage.
+COPY --from=builder --chown=nextjs:nodejs ./.next/static ./.next/static
+
+# Set the user to the non-root user
+USER nextjs
+
 EXPOSE 3000
 
-# Set the PORT environment variable.
+# Set the port environment variable
 ENV PORT 3000
-# Recommended for production to disable hostname checking
-ENV NODE_HOSTNAME 0.0.0.0
 
-# Start the Node.js server.
-# The standalone output creates a 'server.js' file for this purpose.
+# The default command to start the Next.js application in standalone mode
 CMD ["node", "server.js"]
