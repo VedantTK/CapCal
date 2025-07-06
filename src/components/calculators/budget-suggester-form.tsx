@@ -187,22 +187,27 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                       <TableHeader>
                         <TableRow>
                           <TableHead>Category</TableHead>
-                          <TableHead className="w-[100px] md:w-[150px]">Amount</TableHead>
-                          <TableHead className="text-right w-[100px]">Percentage</TableHead>
-                          <TableHead className="text-right w-[60px]">Actions</TableHead>
+                          <TableHead className="w-[120px]">Amount</TableHead>
+                          <TableHead className="text-right w-[80px]">
+                            <span className="sm:hidden" title="Percentage">%</span>
+                            <span className="hidden sm:inline">Percentage</span>
+                          </TableHead>
+                          <TableHead className="text-right w-[50px]">
+                            <span className="hidden sm:inline">Actions</span>
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {editableBudget.map(item => (
                           <TableRow key={item.id}>
-                            <TableCell className="font-medium">
+                            <TableCell className="font-medium pr-1">
                                 <div className="flex items-center gap-2">
                                   <item.icon className="h-4 w-4 text-muted-foreground flex-shrink-0 hidden sm:block" />
                                   <Input
                                     type="text"
                                     value={item.category}
                                     onChange={(e) => handleCategoryNameChange(item.id, e.target.value)}
-                                    className="h-8 border-dashed bg-transparent focus-visible:ring-1 focus-visible:bg-background"
+                                    className="h-8 border-dashed bg-transparent focus-visible:ring-1 focus-visible:bg-background px-1"
                                   />
                                 </div>
                             </TableCell>
@@ -213,7 +218,7 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                                   type="number" 
                                   value={Math.round(item.amount)}
                                   onChange={(e) => handleAmountChange(item.id, e.target.value)}
-                                  className="h-8"
+                                  className="h-8 px-1"
                                 />
                               </div>
                             </TableCell>
