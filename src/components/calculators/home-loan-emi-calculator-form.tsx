@@ -550,38 +550,26 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                         <Card>
                             <CardHeader><CardTitle>Yearly Amortization Schedule</CardTitle></CardHeader>
                             <CardContent className="overflow-auto">
-                                <div className="md:hidden">
-                                    {result.yearlySchedule.map((row) => (
-                                        <div key={row.year} className="border-b p-4 space-y-2">
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Year</span><span className="font-medium">{row.year}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Principal Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Interest Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Ending Balance</span><span className="font-medium">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="hidden md:block">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-[100px]">Year</TableHead>
-                                                <TableHead className="text-right">Principal Paid</TableHead>
-                                                <TableHead className="text-right">Interest Paid</TableHead>
-                                                <TableHead className="text-right">Ending Balance</TableHead>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Year</TableHead>
+                                            <TableHead className="text-right">Principal Paid</TableHead>
+                                            <TableHead className="text-right">Interest Paid</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.yearlySchedule.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell>{row.year}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                             </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {result.yearlySchedule.map((row) => (
-                                                <TableRow key={row.year}>
-                                                    <TableCell>{row.year}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
+                                        ))}
+                                    </TableBody>
+                                </Table>
                             </CardContent>
                         </Card>
                     )}
@@ -589,41 +577,28 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                         <Card>
                             <CardHeader><CardTitle>Monthly Amortization Schedule</CardTitle></CardHeader>
                             <CardContent className="overflow-auto">
-                               <div className="md:hidden">
-                                    {result.monthlySchedule.map((row) => (
-                                        <div key={row.month} className="border-b p-4 space-y-2">
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Month</span><span className="font-medium">{row.month}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Principal Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Interest Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Total Payment</span><span className="font-medium">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Ending Balance</span><span className="font-medium">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="hidden md:block">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-[80px]">Month</TableHead>
-                                                <TableHead className="text-right">Principal Paid</TableHead>
-                                                <TableHead className="text-right">Interest Paid</TableHead>
-                                                <TableHead className="text-right">Total Payment</TableHead>
-                                                <TableHead className="text-right">Ending Balance</TableHead>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[80px]">Month</TableHead>
+                                            <TableHead className="text-right">Principal Paid</TableHead>
+                                            <TableHead className="text-right">Interest Paid</TableHead>
+                                            <TableHead className="text-right">Total Payment</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.monthlySchedule.map((row) => (
+                                            <TableRow key={row.month}>
+                                                <TableCell>{row.month}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                                             </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {result.monthlySchedule.map((row) => (
-                                                <TableRow key={row.month}>
-                                                    <TableCell>{row.month}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
+                                        ))}
+                                    </TableBody>
+                                </Table>
                             </CardContent>
                         </Card>
                     )}
@@ -699,26 +674,14 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                             <Card>
                                 <CardHeader><CardTitle>New Yearly Amortization Schedule</CardTitle></CardHeader>
                                 <CardContent className="overflow-auto">
-                                    <div className="md:hidden">
-                                        {savingsResult.newYearlySchedule.map((row) => (
-                                            <div key={row.year} className="border-b p-4 space-y-2">
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Year</span><span className="font-medium">{row.year}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Principal</span><span className="font-medium">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Interest</span><span className="font-medium">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Ending Balance</span><span className="font-medium">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="hidden md:block">
-                                        <Table>
-                                            <TableHeader><TableRow><TableHead>Year</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
-                                            <TableBody>
-                                                {savingsResult.newYearlySchedule.map((row) => (
-                                                    <TableRow key={row.year}><TableCell>{row.year}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
+                                    <Table>
+                                        <TableHeader><TableRow><TableHead>Year</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
+                                        <TableBody>
+                                            {savingsResult.newYearlySchedule.map((row) => (
+                                                <TableRow key={row.year}><TableCell>{row.year}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
                                 </CardContent>
                             </Card>
                         )}
@@ -726,27 +689,14 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                             <Card>
                                 <CardHeader><CardTitle>New Monthly Amortization Schedule</CardTitle></CardHeader>
                                 <CardContent className="overflow-auto">
-                                    <div className="md:hidden">
-                                        {savingsResult.newMonthlySchedule.map((row) => (
-                                            <div key={row.month} className="border-b p-4 space-y-2">
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Month</span><span className="font-medium">{row.month}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Principal</span><span className="font-medium">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Interest</span><span className="font-medium">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Total Payment</span><span className="font-medium">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                                <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Ending Balance</span><span className="font-medium">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="hidden md:block">
-                                        <Table>
-                                            <TableHeader><TableRow><TableHead>Month</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Total Payment</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
-                                            <TableBody>
-                                                {savingsResult.newMonthlySchedule.map((row) => (
-                                                    <TableRow key={row.month}><TableCell>{row.month}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
+                                    <Table>
+                                        <TableHeader><TableRow><TableHead>Month</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Total Payment</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
+                                        <TableBody>
+                                            {savingsResult.newMonthlySchedule.map((row) => (
+                                                <TableRow key={row.month}><TableCell>{row.month}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
                                 </CardContent>
                             </Card>
                         )}
