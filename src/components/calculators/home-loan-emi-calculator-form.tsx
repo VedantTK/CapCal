@@ -606,7 +606,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                             <Table>
                                 <TableBody>
                                     <TableRow><TableCell>Monthly EMI</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{result.monthlyEmi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
-                                    <TableRow><TableCell>Loan Tenure</TableCell><TableCell className="text-right">{loanTenureYears} Years</TableCell></TableRow>
+                                    <TableRow><TableCell>Loan Tenure</TableCell><TableCell className="text-right">{form.getValues().loanTenureYears} Years</TableCell></TableRow>
                                     <TableRow><TableCell>Total Interest</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{result.totalInterest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
                                     <TableRow><TableCell>Total Payment</TableCell><TableCell className="text-right">{selectedCurrencySymbol}{result.totalPayment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell></TableRow>
                                 </TableBody>
@@ -627,14 +627,14 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
 
                     <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-900/30">
                         <h3 className="font-bold text-xl text-green-700 dark:text-green-300">Your Total Savings</h3>
-                        <div className="flex justify-around items-center mt-2">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:justify-around items-center mt-2">
                             <div>
                                 <p className="text-sm text-muted-foreground">Interest Saved</p>
-                                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{selectedCurrencySymbol}{savingsResult.interestSaved.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{selectedCurrencySymbol}{savingsResult.interestSaved.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                             </div>
                              <div>
                                 <p className="text-sm text-muted-foreground">Time Saved</p>
-                                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{Math.floor(savingsResult.timeSavedMonths / 12)} Yrs, {savingsResult.timeSavedMonths % 12} Mos</p>
+                                <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">{Math.floor(savingsResult.timeSavedMonths / 12)} Yrs, {savingsResult.timeSavedMonths % 12} Mos</p>
                             </div>
                         </div>
                     </div>
@@ -682,7 +682,3 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
     </Card>
   );
 }
-
-    
-
-    
