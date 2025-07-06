@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { FileText, Shield, Info, TrendingUp, Target } from 'lucide-react';
 import StockAverageForm from '@/components/calculators/stock-average-form';
 import StockProfitLossForm from '@/components/calculators/stock-profit-loss-form';
-import SipCalculatorForm from '@/components/calculators/sip-calculator-form';
+import EnhancedSipCalculatorForm from '@/components/calculators/enhanced-sip-calculator-form';
 import PercentageCalculatorForm from '@/components/calculators/percentage-calculator-form';
 import EmiCalculatorForm from '@/components/calculators/emi-calculator-form';
 import CagrCalculatorForm from '@/components/calculators/cagr-calculator-form';
-import SwpCalculatorForm from '@/components/calculators/swp-calculator-form';
+import EnhancedSwpCalculatorForm from '@/components/calculators/enhanced-swp-calculator-form';
 import StockSplitCalculatorForm from '@/components/calculators/stock-split-calculator-form';
-import StepUpSipCalculatorForm from '@/components/calculators/step-up-sip-calculator-form';
+import EnhancedStepUpSipCalculatorForm from '@/components/calculators/enhanced-step-up-sip-calculator-form';
 import PlaceholderForm from '@/components/calculators/placeholder-form';
 
 export async function generateStaticParams() {
@@ -35,9 +35,9 @@ export default async function CalculatorPage({ params }: { params: Promise<{ cal
       case 'stock-profit-loss':
         return <StockProfitLossForm calculatorName={calculator.name} />;
       case 'sip':
-        return <SipCalculatorForm calculatorName={calculator.name} />;
+        return <EnhancedSipCalculatorForm calculatorName={calculator.name} />;
       case 'step-up-sip':
-        return <StepUpSipCalculatorForm calculatorName={calculator.name} />;
+        return <EnhancedStepUpSipCalculatorForm calculatorName={calculator.name} />;
       case 'percentage':
         return <PercentageCalculatorForm calculatorName={calculator.name} />;
       case 'emi':
@@ -45,7 +45,7 @@ export default async function CalculatorPage({ params }: { params: Promise<{ cal
       case 'cagr':
         return <CagrCalculatorForm calculatorName={calculator.name} />;
       case 'swp':
-        return <SwpCalculatorForm calculatorName={calculator.name} />;
+        return <EnhancedSwpCalculatorForm calculatorName={calculator.name} />;
       case 'stock-split':
         return <StockSplitCalculatorForm calculatorName={calculator.name} />;
       default:
@@ -119,13 +119,13 @@ export default async function CalculatorPage({ params }: { params: Promise<{ cal
       </header>
 
       {/* Calculator Form */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {renderCalculatorForm()}
       </div>
 
       {/* Wealth Tip Section */}
       {isWealthFocused && (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="wealth-tip">
             <div className="flex items-start gap-3">
               <TrendingUp className="h-5 w-5 wealth-text flex-shrink-0 mt-0.5" />
@@ -146,7 +146,7 @@ export default async function CalculatorPage({ params }: { params: Promise<{ cal
       )}
 
       {/* Disclaimer & Actions with Wealth Theme */}
-      <Card className="finance-card max-w-4xl mx-auto">
+      <Card className="finance-card max-w-6xl mx-auto">
         <CardHeader className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-amber-500/10">
