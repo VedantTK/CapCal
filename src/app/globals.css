@@ -4,91 +4,92 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%; /* Softer white with slight blue tint */
-    --foreground: 222 84% 4.9%; /* Deep navy for text */
+    /* Navy Blue Primary - Trust & Financial Expertise */
+    --background: 210 20% 98%; /* Light Gray Background #F5F7FA */
+    --foreground: 210 22% 22%; /* Primary Text #2C3E50 */
 
-    --card: 0 0% 100%; /* Pure white for cards */
-    --card-foreground: 222 84% 4.9%;
+    --card: 0 0% 100%; /* White Component Background #FFFFFF */
+    --card-foreground: 210 22% 22%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 84% 4.9%;
+    --popover-foreground: 210 22% 22%;
 
-    --primary: 221 83% 53%; /* Professional blue */
-    --primary-foreground: 210 40% 98%;
+    --primary: 210 50% 20%; /* Navy Blue #1A2E45 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%; /* Light blue-gray */
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 210 20% 95%; /* Light secondary */
+    --secondary-foreground: 210 22% 22%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 10% 50%; /* Secondary Text #7F8C8D */
 
-    --accent: 142 76% 36%; /* Professional green for gains */
-    --accent-foreground: 355 7% 97%;
+    --accent: 145 63% 42%; /* Emerald Green #2ECC71 - Wealth Color */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%; /* Red for losses */
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 74% 42%; /* Negative Values #E74C3C */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 210 50% 20%;
 
     --radius: 0.75rem;
 
-    --chart-1: 221 83% 53%;
-    --chart-2: 142 76% 36%;
-    --chart-3: 48 96% 53%;
-    --chart-4: 262 83% 58%;
-    --chart-5: 0 84% 60%;
-
     /* Finance-specific colors */
-    --success: 142 76% 36%;
-    --warning: 48 96% 53%;
-    --info: 199 89% 48%;
-    --profit: 142 76% 36%;
-    --loss: 0 84% 60%;
+    --wealth: 145 63% 42%; /* Emerald Green #2ECC71 */
+    --opportunity: 45 100% 48%; /* Gold/Amber #F4B400 */
+    --profit: 134 61% 41%; /* Positive Values #27AE60 */
+    --loss: 0 74% 42%; /* Negative Values #E74C3C */
+    --motivation: 35 84% 62%; /* Motivational Tips #F39C12 */
+
+    --chart-1: 210 50% 20%;
+    --chart-2: 145 63% 42%;
+    --chart-3: 45 100% 48%;
+    --chart-4: 35 84% 62%;
+    --chart-5: 0 74% 42%;
   }
 
   .dark {
-    --background: 222 84% 4.9%; /* Dark navy */
-    --foreground: 210 40% 98%;
+    --background: 210 50% 8%; /* Dark Navy Background */
+    --foreground: 210 20% 95%;
 
-    --card: 222 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 210 50% 10%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 222 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 210 50% 10%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 217 91% 60%; /* Brighter blue for dark mode */
-    --primary-foreground: 222 84% 4.9%;
+    --primary: 210 50% 25%; /* Lighter Navy for dark mode */
+    --primary-foreground: 210 20% 95%;
 
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 210 50% 15%;
+    --secondary-foreground: 210 20% 95%;
 
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 210 50% 15%;
+    --muted-foreground: 210 20% 65%;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 145 63% 42%; /* Keep Emerald Green */
+    --accent-foreground: 210 50% 8%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 74% 50%;
+    --destructive-foreground: 210 20% 95%;
 
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 224 71% 4%;
-
-    --chart-1: 217 91% 60%;
-    --chart-2: 142 76% 36%;
-    --chart-3: 48 96% 53%;
-    --chart-4: 262 83% 58%;
-    --chart-5: 0 84% 60%;
+    --border: 210 50% 15%;
+    --input: 210 50% 15%;
+    --ring: 210 50% 25%;
 
     /* Finance-specific colors for dark mode */
-    --success: 142 76% 36%;
-    --warning: 48 96% 53%;
-    --info: 199 89% 48%;
-    --profit: 142 76% 36%;
-    --loss: 0 84% 60%;
+    --wealth: 145 63% 42%;
+    --opportunity: 45 100% 55%;
+    --profit: 134 61% 45%;
+    --loss: 0 74% 50%;
+    --motivation: 35 84% 65%;
+
+    --chart-1: 210 50% 35%;
+    --chart-2: 145 63% 42%;
+    --chart-3: 45 100% 55%;
+    --chart-4: 35 84% 65%;
+    --chart-5: 0 74% 50%;
   }
 }
 
@@ -120,59 +121,103 @@
 }
 
 @layer components {
-  /* Finance-specific utility classes */
+  /* Wealth-focused utility classes */
+  .wealth-text {
+    color: hsl(var(--wealth));
+  }
+  
+  .opportunity-text {
+    color: hsl(var(--opportunity));
+  }
+  
   .profit-text {
-    @apply text-green-600 dark:text-green-400;
+    color: hsl(var(--profit));
   }
   
   .loss-text {
-    @apply text-red-600 dark:text-red-400;
+    color: hsl(var(--loss));
+  }
+  
+  .motivation-text {
+    color: hsl(var(--motivation));
   }
   
   .neutral-text {
     @apply text-muted-foreground;
   }
   
+  /* Enhanced finance cards with wealth theme */
   .finance-card {
-    @apply bg-gradient-to-br from-white to-blue-50/30 dark:from-card dark:to-blue-950/20 border border-border/50 shadow-sm hover:shadow-md transition-all duration-200;
+    @apply bg-gradient-to-br from-white via-white to-blue-50/20 dark:from-card dark:via-card dark:to-primary/5 border border-border/50 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300;
+  }
+  
+  .wealth-card {
+    @apply bg-gradient-to-br from-white to-emerald-50/30 dark:from-card dark:to-emerald-950/10 border border-emerald-200/50 dark:border-emerald-800/30;
+  }
+  
+  .opportunity-card {
+    @apply bg-gradient-to-br from-white to-amber-50/30 dark:from-card dark:to-amber-950/10 border border-amber-200/50 dark:border-amber-800/30;
   }
   
   .metric-card {
     @apply bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-lg p-4;
   }
   
-  .calculator-grid {
-    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  .wealth-score-card {
+    @apply bg-gradient-to-br from-emerald-500/10 via-amber-500/10 to-emerald-500/10 border border-emerald-200 dark:border-emerald-800/50 rounded-xl p-6;
   }
   
-  .form-section {
-    @apply space-y-6 p-6 bg-card rounded-lg border border-border/50 shadow-sm;
-  }
-  
-  .result-section {
-    @apply bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 border border-primary/20 rounded-lg p-6 space-y-4;
-  }
-  
-  /* Enhanced button styles */
+  /* Enhanced button styles with wealth theme */
   .btn-primary {
     @apply bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
+  }
+  
+  .btn-wealth {
+    background: linear-gradient(135deg, hsl(var(--wealth)), hsl(var(--wealth))/0.9);
+    @apply text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
+  }
+  
+  .btn-opportunity {
+    background: linear-gradient(135deg, hsl(var(--opportunity)), hsl(var(--opportunity))/0.9);
+    @apply text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5;
   }
   
   .btn-secondary {
     @apply bg-gradient-to-r from-secondary to-secondary/90 hover:from-secondary/90 hover:to-secondary text-secondary-foreground border border-border/50 shadow-sm hover:shadow-md transition-all duration-200;
   }
   
-  /* Typography enhancements */
+  /* Typography with wealth focus */
   .heading-primary {
-    @apply text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+    @apply text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--wealth)), hsl(var(--opportunity)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .heading-secondary {
     @apply text-2xl sm:text-3xl font-semibold tracking-tight text-foreground;
   }
   
+  .wealth-heading {
+    background: linear-gradient(135deg, hsl(var(--wealth)), hsl(var(--opportunity)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
   .text-financial {
     @apply font-mono text-lg font-semibold tabular-nums;
+  }
+  
+  /* Wealth Score Progress Bar */
+  .wealth-progress {
+    @apply w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden;
+  }
+  
+  .wealth-progress-fill {
+    background: linear-gradient(90deg, hsl(var(--wealth)), hsl(var(--opportunity)));
+    @apply h-full transition-all duration-500 ease-out;
   }
   
   /* Animation utilities */
@@ -182,6 +227,10 @@
   
   .slide-up {
     animation: slideUp 0.3s ease-out;
+  }
+  
+  .wealth-pulse {
+    animation: wealthPulse 2s ease-in-out infinite;
   }
   
   @keyframes fadeIn {
@@ -200,14 +249,31 @@
     }
   }
   
+  @keyframes wealthPulse {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 hsl(var(--wealth) / 0.4);
+    }
+    50% { 
+      box-shadow: 0 0 0 10px hsl(var(--wealth) / 0);
+    }
+  }
+  
   /* Enhanced focus states */
   .focus-enhanced:focus-visible {
     @apply ring-2 ring-primary ring-offset-2 ring-offset-background outline-none;
   }
   
-  /* Card hover effects */
+  /* Card hover effects with wealth theme */
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary/30;
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  .wealth-card-hover:hover {
+    @apply shadow-emerald-200/50 dark:shadow-emerald-900/30 border-emerald-300 dark:border-emerald-700;
+  }
+  
+  .opportunity-card-hover:hover {
+    @apply shadow-amber-200/50 dark:shadow-amber-900/30 border-amber-300 dark:border-amber-700;
   }
   
   /* Financial data table styles */
@@ -226,6 +292,30 @@
   .financial-table tr:hover {
     @apply bg-muted/30;
   }
+  
+  /* Wealth tip boxes */
+  .wealth-tip {
+    @apply bg-gradient-to-r from-emerald-50 to-amber-50 dark:from-emerald-950/20 dark:to-amber-950/20 border border-emerald-200 dark:border-emerald-800/50 rounded-lg p-4;
+  }
+  
+  .motivation-tip {
+    background: linear-gradient(135deg, hsl(var(--opportunity))/0.1, hsl(var(--wealth))/0.1);
+    @apply border border-amber-200 dark:border-amber-800/50 rounded-lg p-4;
+  }
+  
+  /* Calculator grid with wealth theme */
+  .calculator-grid {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+  
+  .form-section {
+    @apply space-y-6 p-6 bg-card rounded-lg border border-border/50 shadow-sm;
+  }
+  
+  .result-section {
+    background: linear-gradient(135deg, hsl(var(--wealth))/0.05, hsl(var(--opportunity))/0.05, hsl(var(--primary))/0.05);
+    @apply border border-emerald-200/50 dark:border-emerald-800/30 rounded-lg p-6 space-y-4;
+  }
 }
 
 /* Custom number input styling */
@@ -239,19 +329,20 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* Enhanced form styling */
+/* Enhanced form styling with wealth theme */
 .form-field {
   @apply relative;
 }
 
 .form-field input:focus + label,
 .form-field input:not(:placeholder-shown) + label {
-  @apply transform -translate-y-2 scale-75 text-primary;
+  color: hsl(var(--primary));
+  @apply transform -translate-y-2 scale-75;
 }
 
-/* Loading states */
+/* Loading states with wealth colors */
 .loading-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(90deg, transparent, hsl(var(--wealth))/0.1, transparent);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -270,4 +361,33 @@ input[type="number"]::-webkit-inner-spin-button {
   .heading-secondary {
     @apply text-xl;
   }
+}
+
+/* Wealth Score specific styles */
+.wealth-score-meter {
+  @apply relative w-32 h-32 mx-auto;
+}
+
+.wealth-score-circle {
+  @apply w-full h-full rounded-full;
+  background: conic-gradient(from 0deg, hsl(var(--wealth)), hsl(var(--opportunity)), hsl(var(--wealth)));
+}
+
+.wealth-score-inner {
+  @apply absolute inset-2 bg-background rounded-full flex items-center justify-center;
+}
+
+/* Motivational elements */
+.growth-indicator {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+  background: linear-gradient(135deg, hsl(var(--wealth))/0.1, hsl(var(--opportunity))/0.1);
+  color: hsl(var(--wealth));
+  border: 1px solid hsl(var(--wealth))/0.2;
+}
+
+.opportunity-badge {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+  background: linear-gradient(135deg, hsl(var(--opportunity))/0.1, hsl(var(--wealth))/0.1);
+  color: hsl(var(--opportunity));
+  border: 1px solid hsl(var(--opportunity))/0.2;
 }
