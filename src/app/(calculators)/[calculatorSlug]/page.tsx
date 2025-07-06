@@ -20,15 +20,16 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function CalculatorPage({ params }: { params: { calculatorSlug: string } }) {
-  const calculator = calculators.find(c => c.slug === params.calculatorSlug);
+export default async function CalculatorPage({ params }: { params: Promise<{ calculatorSlug: string }> }) {
+  const { calculatorSlug } = await params;
+  const calculator = calculators.find(c => c.slug === calculatorSlug);
 
   if (!calculator) {
     notFound();
   }
 
   const renderCalculatorForm = () => {
-    switch (params.calculatorSlug) {
+    switch (calculatorSlug) {
       case 'stock-average':
         return <StockAverageForm calculatorName={calculator.name} />;
       case 'stock-profit-loss':
