@@ -19,7 +19,7 @@ import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Home, Lightbulb, Car, UtensilsCrossed, ShieldAlert, Clapperboard, Smartphone, Repeat, ShieldCheck, Wrench, PiggyBank, Trash2, Info, PlusCircle } from "lucide-react";
+import { Home, Lightbulb, Car, UtensilsCrossed, ShieldAlert, Clapperboard, Smartphone, Repeat, ShieldCheck, Wrench, PiggyBank, Trash2, Info } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +35,6 @@ interface BudgetItem {
   amount: number;
   percentage: number;
   icon: LucideIcon;
-  isCustom?: boolean;
 }
 
 interface BudgetSuggesterFormProps {
@@ -111,7 +110,6 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
         ...item,
         id: item.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-'),
         percentage: (item.amount / monthlySalary) * 100,
-        isCustom: false,
     }));
 
     setEditableBudget(resultData);
@@ -137,18 +135,6 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
         item.id === id ? { ...item, category: newName } : item
       )
     );
-  };
-
-  const handleAddCategory = () => {
-    const newCategory: BudgetItem = {
-      id: `custom-${Date.now()}`,
-      category: 'New Category',
-      amount: 0,
-      percentage: 0,
-      icon: Wrench,
-      isCustom: true,
-    };
-    setEditableBudget(prev => prev ? [...prev, newCategory] : [newCategory]);
   };
 
   const handleRemoveCategory = (id: string) => {
@@ -193,7 +179,7 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
               <Card className="w-full bg-muted/50">
                 <CardHeader>
                     <CardTitle>Your Personalized Budget Plan</CardTitle>
-                    <CardDescription>This is a starting point. Feel free to edit amounts or remove categories to match your lifestyle.</CardDescription>
+                    <CardDescription>This is a starting point. Feel free to edit amounts, category names, or remove categories to match your lifestyle.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="overflow-x-auto">
@@ -209,18 +195,16 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                       <TableBody>
                         {editableBudget.map(item => (
                           <TableRow key={item.id}>
-                            <TableCell className="font-medium flex items-center gap-2">
-                              <item.icon className="h-4 w-4 text-muted-foreground" />
-                              {item.isCustom ? (
-                                <Input
-                                  type="text"
-                                  value={item.category}
-                                  onChange={(e) => handleCategoryNameChange(item.id, e.target.value)}
-                                  className="h-8 border-dashed"
-                                />
-                              ) : (
-                                item.category
-                              )}
+                            <TableCell className="font-medium">
+                                <div className="flex items-center gap-2">
+                                  <item.icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                  <Input
+                                    type="text"
+                                    value={item.category}
+                                    onChange={(e) => handleCategoryNameChange(item.id, e.target.value)}
+                                    className="h-8 border-dashed bg-transparent focus-visible:ring-1 focus-visible:bg-background"
+                                  />
+                                </div>
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center">
@@ -251,11 +235,6 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                     </Table>
                   </div>
                   
-                  <Button variant="outline" onClick={handleAddCategory} className="w-full sm:w-auto">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Category
-                  </Button>
-
                   <Alert variant={Math.abs(unallocatedAmount) > 0.01 ? (unallocatedAmount > 0 ? 'default' : 'destructive') : 'default'} className={cn(unallocatedAmount > 0.01 && "border-blue-500/50 bg-blue-50 dark:bg-blue-900/30")}>
                     <Info className="h-4 w-4" />
                     <AlertTitle>
