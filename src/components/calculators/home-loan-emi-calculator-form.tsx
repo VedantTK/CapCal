@@ -106,6 +106,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
       extraEmiPerYear: undefined,
       emiIncreasePercentage: undefined,
     },
+    mode: 'onChange' // Ensures validation happens as user types
   });
 
   const [loanAmount, annualInterestRate, loanTenureYears] = form.watch(['loanAmount', 'annualInterestRate', 'loanTenureYears']);
@@ -118,6 +119,9 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
   function onSubmit(data: HomeLoanEmiFormValues) {
     setSavingsResult(null); // Clear previous savings calculation
     setShowSavingsOptions(false); // Hide savings form on new base calculation
+    form.setValue('prepaymentType', undefined); // Reset radio button
+    form.setValue('extraEmiPerYear', undefined); // Reset extra payment
+    form.setValue('emiIncreasePercentage', undefined); // Reset percentage increase
 
     const principal = data.loanAmount;
     const annualRate = data.annualInterestRate / 100;
@@ -164,7 +168,8 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
         return;
     }
     
-    let balance = form.getValues().loanAmount;
+    const loanAmountValue = Number(form.getValues().loanAmount);
+    let balance = loanAmountValue;
     const monthlyRate = annualInterestRate / 100 / 12;
     let currentEmi = result.monthlyEmi;
 
@@ -230,7 +235,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
         });
     }
 
-    const newTotalPayment = form.getValues().loanAmount + newTotalInterestPaid;
+    const newTotalPayment = loanAmountValue + newTotalInterestPaid;
     const interestSaved = result.totalInterest - newTotalInterestPaid;
     const timeSavedMonths = (form.getValues().loanTenureYears * 12) - months;
 
@@ -247,7 +252,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
 
     onResultUpdate({
       summary: {
-        "Loan Amount": form.getValues().loanAmount,
+        "Loan Amount": loanAmountValue,
         "Annual Interest Rate (%)": annualInterestRate,
         "Loan Tenure (Years)": form.getValues().loanTenureYears,
         "Monthly EMI": result.monthlyEmi.toFixed(2),
@@ -634,5 +639,3 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
     </Card>
   );
 }
-
-    
