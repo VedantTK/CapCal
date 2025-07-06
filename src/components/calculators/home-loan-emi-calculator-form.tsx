@@ -103,7 +103,6 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
       loanAmount: undefined,
       annualInterestRate: 8.5,
       loanTenureYears: 20,
-      prepaymentType: 'extra',
       extraEmiPerYear: undefined,
       emiIncreasePercentage: undefined,
     },
@@ -488,7 +487,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                     <TabsContent value="yearly">
                       <Card>
                         <CardHeader><CardTitle>Yearly Amortization Schedule</CardTitle></CardHeader>
-                        <CardContent className="h-72 overflow-auto">
+                        <CardContent className="overflow-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -515,7 +514,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                     <TabsContent value="monthly">
                         <Card>
                             <CardHeader><CardTitle>Monthly Amortization Schedule</CardTitle></CardHeader>
-                            <CardContent className="h-72 overflow-auto">
+                            <CardContent className="overflow-auto">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -597,7 +596,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                         <TabsContent value="yearly">
                             <Card>
                                 <CardHeader><CardTitle>New Yearly Amortization Schedule</CardTitle></CardHeader>
-                                <CardContent className="h-72 overflow-auto">
+                                <CardContent className="overflow-auto">
                                     <Table>
                                         <TableHeader><TableRow><TableHead>Year</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
                                         <TableBody>
@@ -612,7 +611,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                          <TabsContent value="monthly">
                             <Card>
                                 <CardHeader><CardTitle>New Monthly Amortization Schedule</CardTitle></CardHeader>
-                                <CardContent className="h-72 overflow-auto">
+                                <CardContent className="overflow-auto">
                                     <Table>
                                         <TableHeader><TableRow><TableHead>Month</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Total Payment</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
                                         <TableBody>
@@ -635,3 +634,5 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
     </Card>
   );
 }
+
+    
