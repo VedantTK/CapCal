@@ -1,6 +1,6 @@
 
 import type { CalculatorInfo } from '@/lib/types';
-import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, BarChartBig, Home, Goal } from 'lucide-react';
+import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, BarChartBig, Home, Goal, Wallet } from 'lucide-react';
 
 export const calculators: CalculatorInfo[] = [
   {
@@ -101,5 +101,14 @@ export const calculators: CalculatorInfo[] = [
     path: '/salary-budget',
     icon: Goal,
     color: 'text-fuchsia-500',
+  },
+  {
+    id: 'budget-suggester',
+    slug: 'budget-suggester',
+    name: 'AI Budget Suggester',
+    description: 'Get an AI-powered personalized budget breakdown based on your income.',
+    path: '/budget-suggester',
+    icon: Wallet,
+    color: 'text-blue-500',
   },
 ];

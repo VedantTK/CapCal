@@ -17,6 +17,7 @@ import PlaceholderForm from '@/components/calculators/placeholder-form';
 import CalculatorShell from '@/components/calculator-shell';
 import HomeLoanEmiCalculatorForm from '@/components/calculators/home-loan-emi-calculator-form';
 import SalaryBudgetCalculatorForm from '@/components/calculators/salary-budget-calculator-form';
+import BudgetSuggesterForm from '@/components/calculators/budget-suggester-form';
 
 export default function CalculatorPage() {
   const params = useParams<{ calculatorSlug: string }>();
@@ -56,6 +57,8 @@ export default function CalculatorPage() {
         return <StockSplitCalculatorForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
       case 'salary-budget':
         return <SalaryBudgetCalculatorForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
+      case 'budget-suggester':
+        return <BudgetSuggesterForm calculatorName={calculator.name} onResultUpdate={handleResultUpdate} />;
       default:
         return <PlaceholderForm calculatorName={calculator.name} />;
     }
