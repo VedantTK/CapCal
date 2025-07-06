@@ -1,6 +1,6 @@
 
 import type { CalculatorInfo } from '@/lib/types';
-import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, BarChartBig, Home } from 'lucide-react';
+import { Scale, Activity, PiggyBank, Percent, Landmark, TrendingUp, WalletCards, GitFork, BarChartBig, Home, Goal } from 'lucide-react';
 
 export const calculators: CalculatorInfo[] = [
   {
@@ -92,5 +92,14 @@ export const calculators: CalculatorInfo[] = [
     path: '/stock-split',
     icon: GitFork,
     color: 'text-purple-500',
+  },
+  {
+    id: 'salary-budget',
+    slug: 'salary-budget',
+    name: 'Salary Budget Calculator',
+    description: 'Plan your monthly budget, track savings, and project wealth growth.',
+    path: '/salary-budget',
+    icon: Goal,
+    color: 'text-fuchsia-500',
   },
 ];
