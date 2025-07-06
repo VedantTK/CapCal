@@ -20,6 +20,7 @@ import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const swpSchema = z.object({
   totalInvestment: z.coerce.number().positive("Total investment must be positive."),
@@ -30,11 +31,29 @@ const swpSchema = z.object({
 
 type SwpFormValues = z.infer<typeof swpSchema>;
 
+interface MonthlyScheduleDetail {
+  month: number;
+  openingBalance: number;
+  interestEarned: number;
+  withdrawal: number;
+  closingBalance: number;
+}
+
+interface YearlyScheduleDetail {
+  year: number;
+  openingBalance: number;
+  totalWithdrawal: number;
+  interestEarned: number;
+  closingBalance: number;
+}
+
 interface SwpResult {
   totalWithdrawn: number;
   finalBalance: number;
   investmentYears: number;
   annualReturnRate: number;
+  monthlySchedule: MonthlyScheduleDetail[];
+  yearlySchedule: YearlyScheduleDetail[];
 }
 
 interface SwpCalculatorFormProps {
@@ -45,6 +64,7 @@ interface SwpCalculatorFormProps {
 export default function SwpCalculatorForm({ calculatorName, onResultUpdate }: SwpCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<SwpResult | null>(null);
+  const [activeView, setActiveView] = useState<'yearly' | 'monthly'>('yearly');
 
   const form = useForm<SwpFormValues>({
     resolver: zodResolver(swpSchema),
@@ -64,39 +84,80 @@ export default function SwpCalculatorForm({ calculatorName, onResultUpdate }: Sw
 
 
   function onSubmit(data: SwpFormValues) {
-    let currentBalance = data.totalInvestment;
+    let balance = data.totalInvestment;
     let totalWithdrawnAmount = 0;
     const monthlyReturnRate = data.annualReturnRate / 100 / 12;
     const numberOfMonths = data.investmentPeriodYears * 12;
+    const monthlySchedule: MonthlyScheduleDetail[] = [];
+    const yearlySchedule: YearlyScheduleDetail[] = [];
 
-    for (let i = 0; i < numberOfMonths; i++) {
-      if (currentBalance <= 0) break;
+    let yearlyWithdrawn = 0;
+    let yearlyInterest = 0;
+    let openingBalanceForYear = balance;
 
-      const withdrawalThisMonth = Math.min(currentBalance, data.monthlyWithdrawal);
-      currentBalance -= withdrawalThisMonth;
-      totalWithdrawnAmount += withdrawalThisMonth;
-      
-      if (currentBalance > 0) {
-          currentBalance += currentBalance * monthlyReturnRate;
-      }
+    for (let month = 1; month <= numberOfMonths; month++) {
+        if (balance <= 0) break;
+
+        const openingBalanceForMonth = balance;
+        const interestForMonth = balance * monthlyReturnRate;
+        balance += interestForMonth;
+        
+        const withdrawalForMonth = Math.min(balance, data.monthlyWithdrawal);
+        balance -= withdrawalForMonth;
+        
+        const closingBalanceForMonth = balance;
+
+        monthlySchedule.push({
+            month,
+            openingBalance: openingBalanceForMonth,
+            interestEarned: interestForMonth,
+            withdrawal: withdrawalForMonth,
+            closingBalance: closingBalanceForMonth,
+        });
+        
+        totalWithdrawnAmount += withdrawalForMonth;
+        yearlyWithdrawn += withdrawalForMonth;
+        yearlyInterest += interestForMonth;
+
+        if (month % 12 === 0 || month === numberOfMonths || balance <= 0) {
+            const year = Math.ceil(month / 12);
+            yearlySchedule.push({
+                year,
+                openingBalance: openingBalanceForYear,
+                totalWithdrawal: yearlyWithdrawn,
+                interestEarned: yearlyInterest,
+                closingBalance: closingBalanceForMonth,
+            });
+            
+            yearlyWithdrawn = 0;
+            yearlyInterest = 0;
+            openingBalanceForYear = closingBalanceForMonth;
+            if (balance <= 0) break;
+        }
     }
     
-    const finalBalance = currentBalance > 0 ? currentBalance : 0;
+    const finalBalance = balance > 0 ? balance : 0;
     const resultData = {
       totalWithdrawn: totalWithdrawnAmount,
       finalBalance,
       investmentYears: data.investmentPeriodYears,
       annualReturnRate: data.annualReturnRate,
+      monthlySchedule,
+      yearlySchedule,
     };
     setResult(resultData);
 
     const exportData = {
-      "Total Investment": data.totalInvestment,
-      "Monthly Withdrawal Amount": data.monthlyWithdrawal,
-      "Expected Annual Return Rate (%)": data.annualReturnRate,
-      "Investment Period (Years)": data.investmentPeriodYears,
-      "Total Amount Withdrawn": totalWithdrawnAmount.toFixed(2),
-      "Final Balance": finalBalance.toFixed(2),
+      summary: {
+        "Total Investment": data.totalInvestment,
+        "Monthly Withdrawal Amount": data.monthlyWithdrawal,
+        "Expected Annual Return Rate (%)": data.annualReturnRate,
+        "Investment Period (Years)": data.investmentPeriodYears,
+        "Total Amount Withdrawn": totalWithdrawnAmount.toFixed(2),
+        "Final Balance": finalBalance.toFixed(2),
+      },
+      yearlySchedule,
+      monthlySchedule
     };
     onResultUpdate(exportData);
   }
@@ -205,10 +266,94 @@ export default function SwpCalculatorForm({ calculatorName, onResultUpdate }: Sw
                       </TableRow>
                     </TableBody>
                   </Table>
-                   <FormDescription className="mt-4">
+                  <FormDescription className="mt-4">
                     Projected values after {result.investmentYears} years with an expected annual return of {result.annualReturnRate}%.
                     Actual returns may vary. If the final balance is zero, your investment may have depleted before the end of the period based on the inputs.
                   </FormDescription>
+
+                  <div className="w-full mt-6 sm:hidden">
+                    <Select value={activeView} onValueChange={(v) => setActiveView(v as 'yearly' | 'monthly')}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select breakdown view" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="yearly">Yearly Breakdown</SelectItem>
+                            <SelectItem value="monthly">Monthly Breakdown</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'yearly' | 'monthly')} className="hidden w-full mt-6 sm:block">
+                      <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
+                          <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
+                      </TabsList>
+                  </Tabs>
+
+                  <div className="mt-4">
+                    {activeView === 'yearly' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Yearly Withdrawal Schedule</CardTitle>
+                            </CardHeader>
+                            <CardContent className="overflow-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Year</TableHead>
+                                            <TableHead className="text-right">Opening Balance</TableHead>
+                                            <TableHead className="text-right">Total Withdrawn</TableHead>
+                                            <TableHead className="text-right">Interest Earned</TableHead>
+                                            <TableHead className="text-right">Closing Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.yearlySchedule.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell>{row.year}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.openingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.totalWithdrawal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interestEarned.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.closingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {activeView === 'monthly' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Monthly Withdrawal Schedule</CardTitle>
+                            </CardHeader>
+                            <CardContent className="overflow-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Month</TableHead>
+                                            <TableHead className="text-right">Opening Balance</TableHead>
+                                            <TableHead className="text-right">Interest Earned</TableHead>
+                                            <TableHead className="text-right">Withdrawal</TableHead>
+                                            <TableHead className="text-right">Closing Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.monthlySchedule.map((row) => (
+                                            <TableRow key={row.month}>
+                                                <TableCell>{row.month}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.openingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interestEarned.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.withdrawal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.closingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -218,3 +363,5 @@ export default function SwpCalculatorForm({ calculatorName, onResultUpdate }: Sw
     </Card>
   );
 }
+
+    

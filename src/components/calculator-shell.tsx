@@ -69,31 +69,57 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
       }
 
     } else if (resultData.summary && (resultData.yearlySchedule || resultData.monthlySchedule || resultData.yearlyBreakdown)) {
-      // Handle standard complex calculators
+      // Handle standard complex calculators (EMI, SWP, etc.)
       const summaryCsv = 'Description,Value\n' + Object.entries(resultData.summary).map(([key, value]) => `${escapeCsvCell(key)},${escapeCsvCell(value)}`).join('\n');
       csvContent += summaryCsv + '\n\n';
 
       if (resultData.yearlySchedule && resultData.yearlySchedule.length > 0) {
-        csvContent += 'Yearly Amortization Schedule\n';
-        const yearlyDataForCsv = resultData.yearlySchedule.map((row: any) => ({
-          'Year': row.year,
-          'Principal Paid': row.principal.toFixed(2),
-          'Interest Paid': row.interest.toFixed(2),
-          'Ending Balance': row.endingBalance.toFixed(2),
-        }));
-        csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
+        // Differentiate between SWP and EMI yearly schedules
+        if (resultData.yearlySchedule[0].interestEarned !== undefined) {
+          csvContent += 'Yearly Withdrawal Schedule\n';
+          const yearlyDataForCsv = resultData.yearlySchedule.map((row: any) => ({
+            'Year': row.year,
+            'Opening Balance': row.openingBalance.toFixed(2),
+            'Total Withdrawn': row.totalWithdrawal.toFixed(2),
+            'Interest Earned': row.interestEarned.toFixed(2),
+            'Closing Balance': row.closingBalance.toFixed(2),
+          }));
+          csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
+        } else {
+          csvContent += 'Yearly Amortization Schedule\n';
+          const yearlyDataForCsv = resultData.yearlySchedule.map((row: any) => ({
+            'Year': row.year,
+            'Principal Paid': row.principal.toFixed(2),
+            'Interest Paid': row.interest.toFixed(2),
+            'Ending Balance': row.endingBalance.toFixed(2),
+          }));
+          csvContent += arrayToCsv(yearlyDataForCsv) + '\n\n';
+        }
       }
       
       if (resultData.monthlySchedule && resultData.monthlySchedule.length > 0) {
-        csvContent += 'Monthly Amortization Schedule\n';
-        const monthlyDataForCsv = resultData.monthlySchedule.map((row: any) => ({
-          'Month': row.month,
-          'Principal Paid': row.principal.toFixed(2),
-          'Interest Paid': row.interest.toFixed(2),
-          'Total Payment': row.totalPayment.toFixed(2),
-          'Ending Balance': row.endingBalance.toFixed(2),
-        }));
-        csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
+        // Differentiate between SWP and EMI monthly schedules
+        if (resultData.monthlySchedule[0].interestEarned !== undefined) {
+            csvContent += 'Monthly Withdrawal Schedule\n';
+            const monthlyDataForCsv = resultData.monthlySchedule.map((row: any) => ({
+              'Month': row.month,
+              'Opening Balance': row.openingBalance.toFixed(2),
+              'Interest Earned': row.interestEarned.toFixed(2),
+              'Withdrawal': row.withdrawal.toFixed(2),
+              'Closing Balance': row.closingBalance.toFixed(2),
+            }));
+            csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
+        } else {
+            csvContent += 'Monthly Amortization Schedule\n';
+            const monthlyDataForCsv = resultData.monthlySchedule.map((row: any) => ({
+              'Month': row.month,
+              'Principal Paid': row.principal.toFixed(2),
+              'Interest Paid': row.interest.toFixed(2),
+              'Total Payment': row.totalPayment.toFixed(2),
+              'Ending Balance': row.endingBalance.toFixed(2),
+            }));
+            csvContent += arrayToCsv(monthlyDataForCsv) + '\n';
+        }
       }
 
       if (resultData.yearlyBreakdown && resultData.yearlyBreakdown.length > 0) {
@@ -142,3 +168,5 @@ export default function CalculatorShell({ children, calculatorSlug, resultData }
     </Card>
   );
 }
+
+    
