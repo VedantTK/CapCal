@@ -105,8 +105,8 @@ export const calculators: CalculatorInfo[] = [
   {
     id: 'budget-suggester',
     slug: 'budget-suggester',
-    name: 'AI Budget Suggester',
-    description: 'Get an AI-powered personalized budget breakdown based on your income.',
+    name: 'Budget Suggester',
+    description: 'Get a personalized budget breakdown based on your income.',
     path: '/budget-suggester',
     icon: Wallet,
     color: 'text-blue-500',
