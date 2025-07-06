@@ -528,7 +528,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                   </Table>
 
                   <Tabs defaultValue="yearly" className="w-full mt-6">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
                       <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
                       <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
                     </TabsList>
@@ -671,7 +671,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                     </div>
                     
                     <Tabs defaultValue="yearly" className="w-full mt-6">
-                        <TabsList className="grid w-full grid-cols-2"><TabsTrigger value="yearly">New Yearly Breakdown</TabsTrigger><TabsTrigger value="monthly">New Monthly Breakdown</TabsTrigger></TabsList>
+                        <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2"><TabsTrigger value="yearly">New Yearly Breakdown</TabsTrigger><TabsTrigger value="monthly">New Monthly Breakdown</TabsTrigger></TabsList>
                         <TabsContent value="yearly">
                             <Card>
                                 <CardHeader><CardTitle>New Yearly Amortization Schedule</CardTitle></CardHeader>
