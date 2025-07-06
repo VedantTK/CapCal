@@ -30,7 +30,7 @@ const homeLoanEmiSchema = z.object({
   loanAmount: z.coerce.number().positive("Loan amount must be positive."),
   annualInterestRate: z.coerce.number().min(0, "Interest rate cannot be negative.").max(100, "Interest rate seems too high."),
   loanTenureYears: z.coerce.number().int().min(1, "Loan tenure must be at least 1 year.").max(50, "Loan tenure max 50 years."),
-  prepaymentType: z.enum(['extra', 'increase']).optional(),
+  prepaymentType: z.enum(['extra', 'increase', 'one_extra_emi']).optional(),
   extraEmiPerYear: z.coerce.number().min(0, "Extra payment cannot be negative.").optional(),
   emiIncreasePercentage: z.coerce.number().min(0, "Increase cannot be negative.").max(50, "Increase seems too high.").optional(),
 }).superRefine((data, ctx) => {
@@ -103,10 +103,11 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
       loanAmount: undefined,
       annualInterestRate: 8.5,
       loanTenureYears: 20,
+      prepaymentType: undefined,
       extraEmiPerYear: undefined,
       emiIncreasePercentage: undefined,
     },
-    mode: 'onChange' // Ensures validation happens as user types
+    mode: 'onChange'
   });
 
   const [loanAmount, annualInterestRate, loanTenureYears] = form.watch(['loanAmount', 'annualInterestRate', 'loanTenureYears']);
@@ -210,8 +211,11 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
             const extraPrincipalPaid = Math.min(balance, extraEmiPerYear);
             balance -= extraPrincipalPaid;
             yearlyPrincipal += extraPrincipalPaid;
-        }
-        if (prepaymentType === 'increase' && emiIncreasePercentage) {
+        } else if (prepaymentType === 'one_extra_emi' && result.monthlyEmi) {
+            const extraPrincipalPaid = Math.min(balance, result.monthlyEmi);
+            balance -= extraPrincipalPaid;
+            yearlyPrincipal += extraPrincipalPaid;
+        } else if (prepaymentType === 'increase' && emiIncreasePercentage) {
           currentEmi *= (1 + emiIncreasePercentage / 100);
         }
 
@@ -421,6 +425,12 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                   )}
                                 />
                               </div>
+                            </FormItem>
+                             <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                    <RadioGroupItem value="one_extra_emi" />
+                                </FormControl>
+                                <FormLabel className="font-normal">Pay one extra EMI per year</FormLabel>
                             </FormItem>
                             <FormItem className="flex items-center space-x-3 space-y-0">
                               <FormControl>
@@ -639,3 +649,5 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
     </Card>
   );
 }
+
+    
