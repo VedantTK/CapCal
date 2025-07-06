@@ -165,12 +165,12 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                           <TableCell className="text-right">{item.percentage.toFixed(2)}%</TableCell>
                         </TableRow>
                       ))}
+                      <TableRow className="font-bold border-t-2 border-primary">
+                          <TableCell>Total</TableCell>
+                          <TableCell className="text-right">{selectedCurrencySymbol}{totalCalculated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                          <TableCell className="text-right">{((totalCalculated/form.getValues("monthlySalary"))*100).toFixed(2)}%</TableCell>
+                      </TableRow>
                     </TableBody>
-                    <TableRow className="font-bold border-t-2 border-primary">
-                        <TableCell>Total</TableCell>
-                        <TableCell className="text-right">{selectedCurrencySymbol}{totalCalculated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                        <TableCell className="text-right">{((totalCalculated/form.getValues("monthlySalary"))*100).toFixed(2)}%</TableCell>
-                    </TableRow>
                   </Table>
                 </CardContent>
               </Card>
