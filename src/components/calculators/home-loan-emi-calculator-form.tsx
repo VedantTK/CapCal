@@ -20,11 +20,9 @@ import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowDown, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-
+import { ChevronsUpDown } from "lucide-react";
 
 const homeLoanEmiSchema = z.object({
   loanAmount: z.coerce.number().positive("Loan amount must be positive."),
@@ -104,6 +102,8 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
   const [result, setResult] = useState<EmiResult | null>(null);
   const [savingsResult, setSavingsResult] = useState<SavingsResult | null>(null);
   const [showSavingsOptions, setShowSavingsOptions] = useState(false);
+  const [activeScheduleView, setActiveScheduleView] = useState<'yearly' | 'monthly'>('yearly');
+  const [activeNewScheduleView, setActiveNewScheduleView] = useState<'yearly' | 'monthly'>('yearly');
 
   const form = useForm<HomeLoanEmiFormValues>({
     resolver: zodResolver(homeLoanEmiSchema),
@@ -129,10 +129,10 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
   function onSubmit(data: HomeLoanEmiFormValues) {
     setSavingsResult(null); // Clear previous savings calculation
     setShowSavingsOptions(false); // Hide savings form on new base calculation
-    form.setValue('prepaymentType', undefined); // Reset radio button
-    form.setValue('extraEmiPerYear', undefined); // Reset extra payment
-    form.setValue('numberOfExtraEmis', 1);
-    form.setValue('emiIncreasePercentage', undefined); // Reset percentage increase
+    form.resetField('prepaymentType');
+    form.resetField('extraEmiPerYear');
+    form.resetField('numberOfExtraEmis', { defaultValue: 1 });
+    form.resetField('emiIncreasePercentage');
 
     const principal = data.loanAmount;
     const annualRate = data.annualInterestRate / 100;
@@ -191,45 +191,53 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
     const newYearlySchedule: YearlyAmortizationDetail[] = [];
     let yearlyPrincipal = 0;
     let yearlyInterest = 0;
+    let yearlyTotalPayment = 0;
 
     while (balance > 0) {
       months++;
       const interestForMonth = balance * monthlyRate;
-      newTotalInterestPaid += interestForMonth;
-
       let principalPaid = currentEmi - interestForMonth;
+      let totalPaymentThisMonth = currentEmi;
+
       if (balance < currentEmi) { // Final payment
         principalPaid = balance;
-        currentEmi = balance + interestForMonth;
+        totalPaymentThisMonth = balance + interestForMonth;
       }
       
       balance -= principalPaid;
+      
+      newTotalInterestPaid += interestForMonth;
 
       newMonthlySchedule.push({
           month: months,
           principal: principalPaid,
           interest: interestForMonth,
-          totalPayment: currentEmi,
+          totalPayment: totalPaymentThisMonth,
           endingBalance: balance,
       });
 
       yearlyPrincipal += principalPaid;
       yearlyInterest += interestForMonth;
+      yearlyTotalPayment += totalPaymentThisMonth;
 
-      if (months % 12 === 0) {
+      if (months % 12 === 0 && balance > 0) {
         if (prepaymentType === 'extra' && extraEmiPerYear) {
             const extraPrincipalPaid = Math.min(balance, extraEmiPerYear);
             balance -= extraPrincipalPaid;
             yearlyPrincipal += extraPrincipalPaid;
+            yearlyTotalPayment += extraPrincipalPaid;
         } else if (prepaymentType === 'extra_emi' && result.monthlyEmi && numberOfExtraEmis) {
             const extraPayment = result.monthlyEmi * numberOfExtraEmis;
             const extraPrincipalPaid = Math.min(balance, extraPayment);
             balance -= extraPrincipalPaid;
             yearlyPrincipal += extraPrincipalPaid;
+            yearlyTotalPayment += extraPrincipalPaid;
         } else if (prepaymentType === 'increase' && emiIncreasePercentage) {
           currentEmi *= (1 + emiIncreasePercentage / 100);
         }
-
+      }
+      
+      if (months % 12 === 0 || balance <= 0) {
         newYearlySchedule.push({
             year: Math.ceil(months / 12),
             principal: yearlyPrincipal,
@@ -238,16 +246,8 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
         });
         yearlyPrincipal = 0;
         yearlyInterest = 0;
+        yearlyTotalPayment = 0;
       }
-    }
-    // Add last partial year if any
-    if (months % 12 !== 0) {
-        newYearlySchedule.push({
-            year: Math.ceil(months / 12),
-            principal: yearlyPrincipal,
-            interest: yearlyInterest,
-            endingBalance: balance,
-        });
     }
 
     const newTotalPayment = loanAmountValue + newTotalInterestPaid;
@@ -527,58 +527,68 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                     </TableBody>
                   </Table>
 
-                  <Tabs defaultValue="yearly" className="w-full mt-6">
-                    <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-                      <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
-                      <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="yearly">
-                      <Card>
-                        <CardHeader><CardTitle>Yearly Amortization Schedule</CardTitle></CardHeader>
-                        <CardContent>
-                           {/* Mobile View */}
-                           <div className="md:hidden">
-                                {result.yearlySchedule.map((row) => (
-                                    <div key={row.year} className="border-b p-4 space-y-2">
-                                        <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Year</span><span className="font-medium">{row.year}</span></div>
-                                        <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Principal Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                        <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Interest Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                        <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Ending Balance</span><span className="font-medium">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Desktop View */}
-                            <div className="hidden md:block overflow-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-[100px]">Year</TableHead>
-                                            <TableHead className="text-right">Principal Paid</TableHead>
-                                            <TableHead className="text-right">Interest Paid</TableHead>
-                                            <TableHead className="text-right">Ending Balance</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {result.yearlySchedule.map((row) => (
-                                            <TableRow key={row.year}>
-                                                <TableCell>{row.year}</TableCell>
-                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                  <div className="w-full mt-6 sm:hidden">
+                    <Select value={activeScheduleView} onValueChange={(v) => setActiveScheduleView(v as 'yearly' | 'monthly')}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select breakdown view" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="yearly">Yearly Breakdown</SelectItem>
+                            <SelectItem value="monthly">Monthly Breakdown</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
+                   <Tabs value={activeScheduleView} onValueChange={(v) => setActiveScheduleView(v as 'yearly' | 'monthly')} className="hidden w-full mt-6 sm:block">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
+                        <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
+                      </TabsList>
+                  </Tabs>
+                  
+                  <div className="mt-4">
+                    {activeScheduleView === 'yearly' && (
+                        <Card>
+                            <CardHeader><CardTitle>Yearly Amortization Schedule</CardTitle></CardHeader>
+                            <CardContent className="overflow-auto">
+                                <div className="md:hidden">
+                                    {result.yearlySchedule.map((row) => (
+                                        <div key={row.year} className="border-b p-4 space-y-2">
+                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Year</span><span className="font-medium">{row.year}</span></div>
+                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Principal Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Interest Paid</span><span className="font-medium">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                            <div className="flex justify-between items-center"><span className="font-semibold text-muted-foreground">Ending Balance</span><span className="font-medium">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="hidden md:block">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-[100px]">Year</TableHead>
+                                                <TableHead className="text-right">Principal Paid</TableHead>
+                                                <TableHead className="text-right">Interest Paid</TableHead>
+                                                <TableHead className="text-right">Ending Balance</TableHead>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </CardContent>
-                      </Card>
-                    </TabsContent>
-                    <TabsContent value="monthly">
+                                        </TableHeader>
+                                        <TableBody>
+                                            {result.yearlySchedule.map((row) => (
+                                                <TableRow key={row.year}>
+                                                    <TableCell>{row.year}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                    <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {activeScheduleView === 'monthly' && (
                         <Card>
                             <CardHeader><CardTitle>Monthly Amortization Schedule</CardTitle></CardHeader>
-                            <CardContent>
-                               {/* Mobile View */}
+                            <CardContent className="overflow-auto">
                                <div className="md:hidden">
                                     {result.monthlySchedule.map((row) => (
                                         <div key={row.month} className="border-b p-4 space-y-2">
@@ -590,9 +600,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                         </div>
                                     ))}
                                 </div>
-
-                                {/* Desktop View */}
-                                <div className="hidden md:block overflow-auto">
+                                <div className="hidden md:block">
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
@@ -618,8 +626,8 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                 </div>
                             </CardContent>
                         </Card>
-                    </TabsContent>
-                  </Tabs>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -631,7 +639,6 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                        {/* Without Prepayment */}
                         <div className="space-y-2">
                             <h3 className="font-semibold text-lg">Without Prepayment</h3>
                             <Table>
@@ -643,7 +650,6 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                 </TableBody>
                             </Table>
                         </div>
-                        {/* With Prepayment */}
                         <div className="space-y-2">
                             <h3 className="font-semibold text-lg">With Prepayment</h3>
                             <Table>
@@ -670,13 +676,29 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                         </div>
                     </div>
                     
-                    <Tabs defaultValue="yearly" className="w-full mt-6">
-                        <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2"><TabsTrigger value="yearly">New Yearly Breakdown</TabsTrigger><TabsTrigger value="monthly">New Monthly Breakdown</TabsTrigger></TabsList>
-                        <TabsContent value="yearly">
+                    <div className="w-full mt-6 sm:hidden">
+                        <Select value={activeNewScheduleView} onValueChange={(v) => setActiveNewScheduleView(v as 'yearly' | 'monthly')}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select breakdown view" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="yearly">New Yearly Breakdown</SelectItem>
+                                <SelectItem value="monthly">New Monthly Breakdown</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Tabs value={activeNewScheduleView} onValueChange={(v) => setActiveNewScheduleView(v as 'yearly' | 'monthly')} className="hidden w-full mt-6 sm:block">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="yearly">New Yearly Breakdown</TabsTrigger>
+                            <TabsTrigger value="monthly">New Monthly Breakdown</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+
+                    <div className="mt-4">
+                        {activeNewScheduleView === 'yearly' && (
                             <Card>
                                 <CardHeader><CardTitle>New Yearly Amortization Schedule</CardTitle></CardHeader>
-                                <CardContent>
-                                    {/* Mobile View */}
+                                <CardContent className="overflow-auto">
                                     <div className="md:hidden">
                                         {savingsResult.newYearlySchedule.map((row) => (
                                             <div key={row.year} className="border-b p-4 space-y-2">
@@ -687,8 +709,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                             </div>
                                         ))}
                                     </div>
-                                    {/* Desktop View */}
-                                    <div className="hidden md:block overflow-auto">
+                                    <div className="hidden md:block">
                                         <Table>
                                             <TableHeader><TableRow><TableHead>Year</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
                                             <TableBody>
@@ -700,12 +721,11 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                     </div>
                                 </CardContent>
                             </Card>
-                        </TabsContent>
-                         <TabsContent value="monthly">
+                        )}
+                         {activeNewScheduleView === 'monthly' && (
                             <Card>
                                 <CardHeader><CardTitle>New Monthly Amortization Schedule</CardTitle></CardHeader>
-                                <CardContent>
-                                    {/* Mobile View */}
+                                <CardContent className="overflow-auto">
                                     <div className="md:hidden">
                                         {savingsResult.newMonthlySchedule.map((row) => (
                                             <div key={row.month} className="border-b p-4 space-y-2">
@@ -717,8 +737,7 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                             </div>
                                         ))}
                                     </div>
-                                    {/* Desktop View */}
-                                    <div className="hidden md:block overflow-auto">
+                                    <div className="hidden md:block">
                                         <Table>
                                             <TableHeader><TableRow><TableHead>Month</TableHead><TableHead className="text-right">Principal</TableHead><TableHead className="text-right">Interest</TableHead><TableHead className="text-right">Total Payment</TableHead><TableHead className="text-right">Ending Balance</TableHead></TableRow></TableHeader>
                                             <TableBody>
@@ -730,12 +749,11 @@ export default function HomeLoanEmiCalculatorForm({ calculatorName, onResultUpda
                                     </div>
                                 </CardContent>
                             </Card>
-                        </TabsContent>
-                    </Tabs>
+                        )}
+                    </div>
                 </CardContent>
               </Card>
             )}
-            
           </CardFooter>
         </form>
       </Form>

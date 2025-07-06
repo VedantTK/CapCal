@@ -20,7 +20,7 @@ import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const emiSchema = z.object({
   loanAmount: z.coerce.number().positive("Loan amount must be positive."),
@@ -61,6 +61,7 @@ interface EmiCalculatorFormProps {
 export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: EmiCalculatorFormProps) {
   const { selectedCurrencySymbol } = useCurrency();
   const [result, setResult] = useState<EmiResult | null>(null);
+  const [activeView, setActiveView] = useState<'yearly' | 'monthly'>('yearly');
 
   const form = useForm<EmiFormValues>({
     resolver: zodResolver(emiSchema),
@@ -249,47 +250,63 @@ export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: Em
                       </TableRow>
                     </TableBody>
                   </Table>
+                  
+                  {/* Responsive Tabs/Dropdown */}
+                  <div className="w-full mt-6 sm:hidden">
+                    <Select value={activeView} onValueChange={(v) => setActiveView(v as 'yearly' | 'monthly')}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select breakdown view" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="yearly">Yearly Breakdown</SelectItem>
+                            <SelectItem value="monthly">Monthly Breakdown</SelectItem>
+                        </SelectContent>
+                    </Select>
+                  </div>
 
-                  <Tabs defaultValue="yearly" className="w-full mt-6">
-                    <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-                      <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
-                      <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="yearly">
-                      <Card>
-                        <CardHeader>
-                            <CardTitle>Yearly Amortization Schedule</CardTitle>
-                        </CardHeader>
-                        <CardContent className="h-72 overflow-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[100px]">Year</TableHead>
-                                        <TableHead className="text-right">Principal Paid</TableHead>
-                                        <TableHead className="text-right">Interest Paid</TableHead>
-                                        <TableHead className="text-right">Ending Balance</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {result.yearlySchedule.map((row) => (
-                                        <TableRow key={row.year}>
-                                            <TableCell>{row.year}</TableCell>
-                                            <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                            <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
-                                            <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                  <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'yearly' | 'monthly')} className="hidden w-full mt-6 sm:block">
+                      <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="yearly">Yearly Breakdown</TabsTrigger>
+                          <TabsTrigger value="monthly">Monthly Breakdown</TabsTrigger>
+                      </TabsList>
+                  </Tabs>
+
+                  <div className="mt-4">
+                    {activeView === 'yearly' && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Yearly Amortization Schedule</CardTitle>
+                            </CardHeader>
+                            <CardContent className="overflow-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Year</TableHead>
+                                            <TableHead className="text-right">Principal Paid</TableHead>
+                                            <TableHead className="text-right">Interest Paid</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                      </Card>
-                    </TabsContent>
-                    <TabsContent value="monthly">
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.yearlySchedule.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell>{row.year}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.principal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.interest.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                                <TableCell className="text-right">{selectedCurrencySymbol}{row.endingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {activeView === 'monthly' && (
                         <Card>
                             <CardHeader>
                                 <CardTitle>Monthly Amortization Schedule</CardTitle>
                             </CardHeader>
-                            <CardContent className="h-72 overflow-auto">
+                            <CardContent className="overflow-auto">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -314,9 +331,8 @@ export default function EmiCalculatorForm({ calculatorName, onResultUpdate }: Em
                                 </Table>
                             </CardContent>
                         </Card>
-                    </TabsContent>
-                  </Tabs>
-
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
