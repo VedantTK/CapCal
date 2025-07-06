@@ -187,7 +187,7 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                       <TableHeader>
                         <TableRow>
                           <TableHead>Category</TableHead>
-                          <TableHead className="w-[150px]">Amount</TableHead>
+                          <TableHead className="w-[100px] md:w-[150px]">Amount</TableHead>
                           <TableHead className="text-right w-[100px]">Percentage</TableHead>
                           <TableHead className="text-right w-[60px]">Actions</TableHead>
                         </TableRow>
@@ -197,7 +197,7 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                           <TableRow key={item.id}>
                             <TableCell className="font-medium">
                                 <div className="flex items-center gap-2">
-                                  <item.icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                  <item.icon className="h-4 w-4 text-muted-foreground flex-shrink-0 hidden sm:block" />
                                   <Input
                                     type="text"
                                     value={item.category}
@@ -208,10 +208,10 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center">
-                                <span className="mr-1 text-muted-foreground">{selectedCurrencySymbol}</span>
+                                <span className="mr-1 text-muted-foreground hidden sm:inline">{selectedCurrencySymbol}</span>
                                 <Input 
                                   type="number" 
-                                  value={item.amount.toFixed(2)}
+                                  value={Math.round(item.amount)}
                                   onChange={(e) => handleAmountChange(item.id, e.target.value)}
                                   className="h-8"
                                 />
@@ -228,24 +228,24 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                         ))}
                         <TableRow className="font-bold border-t-2 border-primary">
                             <TableCell>Total Allocated</TableCell>
-                            <TableCell className="text-right" colSpan={2}>{selectedCurrencySymbol}{totalAllocated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                            <TableCell className="text-right" colSpan={2}>{selectedCurrencySymbol}{Math.round(totalAllocated).toLocaleString()}</TableCell>
                             <TableCell />
                         </TableRow>
                       </TableBody>
                     </Table>
                   </div>
                   
-                  <Alert variant={Math.abs(unallocatedAmount) > 0.01 ? (unallocatedAmount > 0 ? 'default' : 'destructive') : 'default'} className={cn(unallocatedAmount > 0.01 && "border-blue-500/50 bg-blue-50 dark:bg-blue-900/30")}>
+                  <Alert variant={Math.abs(unallocatedAmount) > 1 ? (unallocatedAmount > 0 ? 'default' : 'destructive') : 'default'} className={cn(unallocatedAmount > 1 && "border-blue-500/50 bg-blue-50 dark:bg-blue-900/30")}>
                     <Info className="h-4 w-4" />
                     <AlertTitle>
-                        {unallocatedAmount > 0.01 && `Unallocated Funds: ${selectedCurrencySymbol}${unallocatedAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
-                        {unallocatedAmount < -0.01 && `Over-allocated by: ${selectedCurrencySymbol}${Math.abs(unallocatedAmount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
-                        {Math.abs(unallocatedAmount) <= 0.01 && "All Funds Allocated"}
+                        {unallocatedAmount > 1 && `Unallocated Funds: ${selectedCurrencySymbol}${Math.round(unallocatedAmount).toLocaleString()}`}
+                        {unallocatedAmount < -1 && `Over-allocated by: ${selectedCurrencySymbol}${Math.round(Math.abs(unallocatedAmount)).toLocaleString()}`}
+                        {Math.abs(unallocatedAmount) <= 1 && "All Funds Allocated"}
                     </AlertTitle>
                     <AlertDescription>
-                        {unallocatedAmount > 0.01 && "You have money left to assign. Consider putting it towards your investments or savings!"}
-                        {unallocatedAmount < -0.01 && "Your budget exceeds your salary. Please adjust the amounts."}
-                        {Math.abs(unallocatedAmount) <= 0.01 && "Great job! Your budget matches your salary."}
+                        {unallocatedAmount > 1 && "You have money left to assign. Consider putting it towards your investments or savings!"}
+                        {unallocatedAmount < -1 && "Your budget exceeds your salary. Please adjust the amounts."}
+                        {Math.abs(unallocatedAmount) <= 1 && "Great job! Your budget matches your salary."}
                     </AlertDescription>
                   </Alert>
 
