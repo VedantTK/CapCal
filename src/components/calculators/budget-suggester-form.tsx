@@ -72,12 +72,13 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
   }, [JSON.stringify(formValues)]);
   
   useEffect(() => {
-    if (editableBudget && form.getValues("monthlySalary")) {
+    const monthlySalary = Number(form.getValues("monthlySalary"));
+    if (editableBudget && monthlySalary > 0) {
         const exportData = editableBudget.reduce((acc, item) => {
             acc[item.category] = item.amount.toFixed(2);
             return acc;
         }, {} as Record<string, string>);
-        exportData["Total Amount"] = (form.getValues("monthlySalary") || 0).toFixed(2);
+        exportData["Total Amount"] = monthlySalary.toFixed(2);
         onResultUpdate(exportData);
     } else {
         onResultUpdate(null);
@@ -114,8 +115,8 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
 
   const handleAmountChange = (category: string, value: string) => {
       const newAmount = parseFloat(value) || 0;
-      const monthlySalary = form.getValues("monthlySalary");
-      if (!monthlySalary) return;
+      const monthlySalary = Number(form.getValues("monthlySalary"));
+      if (!monthlySalary || monthlySalary <= 0) return;
 
       setEditableBudget(prev => 
           prev!.map(item => 
@@ -130,7 +131,7 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
       setEditableBudget(prev => prev!.filter(item => item.category !== category));
   };
   
-  const monthlySalary = form.getValues("monthlySalary");
+  const monthlySalary = Number(form.getValues("monthlySalary")) || 0;
   const totalAllocated = editableBudget?.reduce((sum, item) => sum + item.amount, 0) ?? 0;
   const unallocatedAmount = monthlySalary - totalAllocated;
 
