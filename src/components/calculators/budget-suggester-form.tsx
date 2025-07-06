@@ -19,7 +19,7 @@ import { useCurrency } from "@/contexts/currency-context";
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Home, Lightbulb, Car, UtensilsCrossed, ShieldAlert, Clapperboard, Smartphone, Repeat, ShieldCheck, Wrench, PiggyBank, Trash2, Info } from "lucide-react";
+import { Home, Lightbulb, Car, UtensilsCrossed, ShieldAlert, Clapperboard, Smartphone, Repeat, ShieldCheck, Wrench, PiggyBank, Trash2, Info, PlusCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,10 +30,12 @@ const budgetSuggesterSchema = z.object({
 type BudgetSuggesterFormValues = z.infer<typeof budgetSuggesterSchema>;
 
 interface BudgetItem {
+  id: string;
   category: string;
   amount: number;
   percentage: number;
   icon: LucideIcon;
+  isCustom?: boolean;
 }
 
 interface BudgetSuggesterFormProps {
@@ -105,30 +107,52 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
     const lastAmount = monthlySalary - runningTotal;
     calculatedItems.push({ ...lastCategory, amount: lastAmount });
     
-    const resultData = calculatedItems.map(item => ({
+    const resultData: BudgetItem[] = calculatedItems.map((item, index) => ({
         ...item,
-        percentage: (item.amount / monthlySalary) * 100
+        id: item.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-'),
+        percentage: (item.amount / monthlySalary) * 100,
+        isCustom: false,
     }));
 
     setEditableBudget(resultData);
   }
 
-  const handleAmountChange = (category: string, value: string) => {
+  const handleAmountChange = (id: string, value: string) => {
       const newAmount = parseFloat(value) || 0;
       const monthlySalary = Number(form.getValues("monthlySalary"));
       if (!monthlySalary || monthlySalary <= 0) return;
 
       setEditableBudget(prev => 
           prev!.map(item => 
-              item.category === category 
+              item.id === id
               ? { ...item, amount: newAmount, percentage: (newAmount / monthlySalary) * 100 } 
               : item
           )
       );
   };
+  
+  const handleCategoryNameChange = (id: string, newName: string) => {
+    setEditableBudget(prev => 
+      prev!.map(item => 
+        item.id === id ? { ...item, category: newName } : item
+      )
+    );
+  };
 
-  const handleRemoveCategory = (category: string) => {
-      setEditableBudget(prev => prev!.filter(item => item.category !== category));
+  const handleAddCategory = () => {
+    const newCategory: BudgetItem = {
+      id: `custom-${Date.now()}`,
+      category: 'New Category',
+      amount: 0,
+      percentage: 0,
+      icon: Wrench,
+      isCustom: true,
+    };
+    setEditableBudget(prev => prev ? [...prev, newCategory] : [newCategory]);
+  };
+
+  const handleRemoveCategory = (id: string) => {
+      setEditableBudget(prev => prev!.filter(item => item.id !== id));
   };
   
   const monthlySalary = Number(form.getValues("monthlySalary")) || 0;
@@ -184,10 +208,19 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                       </TableHeader>
                       <TableBody>
                         {editableBudget.map(item => (
-                          <TableRow key={item.category}>
+                          <TableRow key={item.id}>
                             <TableCell className="font-medium flex items-center gap-2">
                               <item.icon className="h-4 w-4 text-muted-foreground" />
-                              {item.category}
+                              {item.isCustom ? (
+                                <Input
+                                  type="text"
+                                  value={item.category}
+                                  onChange={(e) => handleCategoryNameChange(item.id, e.target.value)}
+                                  className="h-8 border-dashed"
+                                />
+                              ) : (
+                                item.category
+                              )}
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center">
@@ -195,14 +228,14 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                                 <Input 
                                   type="number" 
                                   value={item.amount.toFixed(2)}
-                                  onChange={(e) => handleAmountChange(item.category, e.target.value)}
+                                  onChange={(e) => handleAmountChange(item.id, e.target.value)}
                                   className="h-8"
                                 />
                               </div>
                             </TableCell>
                             <TableCell className="text-right">{item.percentage.toFixed(2)}%</TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" onClick={() => handleRemoveCategory(item.category)} className="h-8 w-8">
+                              <Button variant="ghost" size="icon" onClick={() => handleRemoveCategory(item.id)} className="h-8 w-8">
                                 <Trash2 className="h-4 w-4 text-destructive" />
                                 <span className="sr-only">Remove {item.category}</span>
                               </Button>
@@ -217,6 +250,11 @@ export default function BudgetSuggesterForm({ calculatorName, onResultUpdate }: 
                       </TableBody>
                     </Table>
                   </div>
+                  
+                  <Button variant="outline" onClick={handleAddCategory} className="w-full sm:w-auto">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Category
+                  </Button>
 
                   <Alert variant={Math.abs(unallocatedAmount) > 0.01 ? (unallocatedAmount > 0 ? 'default' : 'destructive') : 'default'} className={cn(unallocatedAmount > 0.01 && "border-blue-500/50 bg-blue-50 dark:bg-blue-900/30")}>
                     <Info className="h-4 w-4" />
