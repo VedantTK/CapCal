@@ -4,92 +4,73 @@
 
 @layer base {
   :root {
-    /* Navy Blue Primary - Trust & Financial Expertise */
-    --background: 210 20% 98%; /* Light Gray Background #F5F7FA */
-    --foreground: 210 22% 22%; /* Primary Text #2C3E50 */
+    /* Simple, clean color palette */
+    --background: 0 0% 100%; /* Pure white */
+    --foreground: 0 0% 9%; /* Near black */
 
-    --card: 0 0% 100%; /* White Component Background #FFFFFF */
-    --card-foreground: 210 22% 22%;
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 22% 22%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 210 50% 20%; /* Navy Blue #1A2E45 */
+    --primary: 220 100% 50%; /* Clean blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 95%; /* Light secondary */
-    --secondary-foreground: 210 22% 22%;
+    --secondary: 0 0% 96%; /* Light gray */
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 210 10% 50%; /* Secondary Text #7F8C8D */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 145 63% 42%; /* Emerald Green #2ECC71 - Wealth Color */
+    --accent: 220 100% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 74% 42%; /* Negative Values #E74C3C */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 210 50% 20%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 220 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 8px;
 
-    /* Finance-specific colors */
-    --wealth: 145 63% 42%; /* Emerald Green #2ECC71 */
-    --opportunity: 45 100% 48%; /* Gold/Amber #F4B400 */
-    --profit: 134 61% 41%; /* Positive Values #27AE60 */
-    --loss: 0 74% 42%; /* Negative Values #E74C3C */
-    --motivation: 35 84% 62%; /* Motivational Tips #F39C12 */
-
-    --chart-1: 210 50% 20%;
-    --chart-2: 145 63% 42%;
-    --chart-3: 45 100% 48%;
-    --chart-4: 35 84% 62%;
-    --chart-5: 0 74% 42%;
+    /* Simple success color */
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
   }
 
   .dark {
-    --background: 210 50% 8%; /* Dark Navy Background */
-    --foreground: 210 20% 95%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
 
-    --card: 210 50% 10%;
-    --card-foreground: 210 20% 95%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 210 50% 10%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 210 50% 25%; /* Lighter Navy for dark mode */
-    --primary-foreground: 210 20% 95%;
+    --primary: 220 100% 60%;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 210 50% 15%;
-    --secondary-foreground: 210 20% 95%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 210 50% 15%;
-    --muted-foreground: 210 20% 65%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 145 63% 42%; /* Keep Emerald Green */
-    --accent-foreground: 210 50% 8%;
+    --accent: 220 100% 60%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 74% 50%;
-    --destructive-foreground: 210 20% 95%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 210 50% 15%;
-    --input: 210 50% 15%;
-    --ring: 210 50% 25%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 220 100% 60%;
 
-    /* Finance-specific colors for dark mode */
-    --wealth: 145 63% 42%;
-    --opportunity: 45 100% 55%;
-    --profit: 134 61% 45%;
-    --loss: 0 74% 50%;
-    --motivation: 35 84% 65%;
-
-    --chart-1: 210 50% 35%;
-    --chart-2: 145 63% 42%;
-    --chart-3: 45 100% 55%;
-    --chart-4: 35 84% 65%;
-    --chart-5: 0 74% 50%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
   }
 }
 
@@ -97,352 +78,175 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground font-body antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    @apply bg-muted;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30 rounded-full;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 }
 
 @layer components {
-  /* Enhanced Card Designs */
-  .premium-card {
-    @apply relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-white via-white to-blue-50/30 dark:from-card dark:via-card dark:to-primary/5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
+  /* Simple card styles */
+  .simple-card {
+    @apply bg-card border border-border rounded-lg shadow-sm;
   }
   
-  .premium-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 transition-opacity duration-300;
+  .simple-card:hover {
+    @apply shadow-md border-primary/20;
   }
   
-  .premium-card:hover::before {
-    @apply opacity-100;
+  /* Simple button styles */
+  .btn-simple {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    @apply h-10 px-4 py-2;
   }
   
-  .wealth-card {
-    @apply relative overflow-hidden rounded-2xl border border-emerald-200/60 dark:border-emerald-800/40 bg-gradient-to-br from-white via-emerald-50/20 to-emerald-100/30 dark:from-card dark:via-emerald-950/10 dark:to-emerald-950/20 shadow-lg hover:shadow-xl hover:shadow-emerald-200/20 dark:hover:shadow-emerald-900/20 transition-all duration-300 hover:-translate-y-1;
-  }
-  
-  .wealth-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-500/10 opacity-0 transition-opacity duration-300;
-  }
-  
-  .wealth-card:hover::before {
-    @apply opacity-100;
-  }
-  
-  .opportunity-card {
-    @apply relative overflow-hidden rounded-2xl border border-amber-200/60 dark:border-amber-800/40 bg-gradient-to-br from-white via-amber-50/20 to-amber-100/30 dark:from-card dark:via-amber-950/10 dark:to-amber-950/20 shadow-lg hover:shadow-xl hover:shadow-amber-200/20 dark:hover:shadow-amber-900/20 transition-all duration-300 hover:-translate-y-1;
-  }
-  
-  .opportunity-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/10 opacity-0 transition-opacity duration-300;
-  }
-  
-  .opportunity-card:hover::before {
-    @apply opacity-100;
-  }
-  
-  .calculator-card {
-    @apply relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-white via-white to-slate-50/50 dark:from-card dark:via-card dark:to-slate-950/20 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
-  }
-  
-  .calculator-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 transition-opacity duration-300;
-  }
-  
-  .calculator-card:hover::before {
-    @apply opacity-100;
-  }
-  
-  .result-card {
-    @apply relative overflow-hidden rounded-2xl border border-emerald-200/50 dark:border-emerald-800/30 bg-gradient-to-br from-emerald-50/50 via-white to-amber-50/30 dark:from-emerald-950/20 dark:via-card dark:to-amber-950/10 shadow-lg;
-  }
-  
-  .result-card::before {
-    content: '';
-    @apply absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-amber-500 to-emerald-500;
-  }
-  
-  .metric-card {
-    @apply relative overflow-hidden rounded-xl border border-border/30 bg-gradient-to-br from-white via-white to-primary/5 dark:from-card dark:via-card dark:to-primary/10 p-6 shadow-sm hover:shadow-md transition-all duration-200;
-  }
-  
-  .metric-card::after {
-    content: '';
-    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent;
-  }
-  
-  .fund-card {
-    @apply relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-white via-white to-blue-50/30 dark:from-card dark:via-card dark:to-blue-950/10 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all duration-300 cursor-pointer;
-  }
-  
-  .fund-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 transition-opacity duration-300;
-  }
-  
-  .fund-card:hover::before {
-    @apply opacity-100;
-  }
-  
-  .stats-card {
-    @apply relative overflow-hidden rounded-xl border border-border/30 bg-gradient-to-br from-white to-slate-50/50 dark:from-card dark:to-slate-950/20 p-4 shadow-sm;
-  }
-  
-  .stats-card::before {
-    content: '';
-    @apply absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500 to-amber-500;
-  }
-  
-  /* Enhanced form sections */
-  .form-section {
-    @apply premium-card p-8 space-y-8;
-  }
-  
-  .form-section-header {
-    @apply flex items-center gap-4 pb-6 border-b border-border/30;
-  }
-  
-  .form-section-icon {
-    @apply p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/20 shadow-sm;
-  }
-  
-  .form-section-title {
-    @apply space-y-2;
-  }
-  
-  /* Enhanced input styling */
-  .enhanced-input {
-    @apply relative rounded-xl border border-border/50 bg-white dark:bg-card px-4 py-3 text-base shadow-sm transition-all duration-200 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 focus:shadow-md hover:border-border;
-  }
-  
-  .enhanced-select {
-    @apply enhanced-input cursor-pointer;
-  }
-  
-  /* Enhanced buttons */
-  .btn-premium {
-    @apply relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary/90 px-6 py-3 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0;
-  }
-  
-  .btn-premium::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 transition-opacity duration-200;
-  }
-  
-  .btn-premium:hover::before {
-    @apply opacity-100;
-  }
-  
-  .btn-wealth {
-    @apply relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 text-white font-medium shadow-lg hover:shadow-xl hover:shadow-emerald-200/30 transition-all duration-200 transform hover:-translate-y-0.5;
-  }
-  
-  .btn-opportunity {
-    @apply relative overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3 text-white font-medium shadow-lg hover:shadow-xl hover:shadow-amber-200/30 transition-all duration-200 transform hover:-translate-y-0.5;
+  .btn-primary {
+    @apply btn-simple bg-primary text-primary-foreground hover:bg-primary/90;
   }
   
   .btn-secondary {
-    @apply relative overflow-hidden rounded-xl border border-border/50 bg-white dark:bg-card px-6 py-3 text-foreground font-medium shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200;
+    @apply btn-simple border border-input bg-background hover:bg-accent hover:text-accent-foreground;
   }
   
-  /* Wealth-focused utility classes */
-  .wealth-text {
-    color: hsl(var(--wealth));
+  .btn-ghost {
+    @apply btn-simple hover:bg-accent hover:text-accent-foreground;
   }
   
-  .opportunity-text {
-    color: hsl(var(--opportunity));
+  /* Simple input styles */
+  .input-simple {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm;
+    @apply ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium;
+    @apply placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2;
+    @apply focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
   
-  .profit-text {
-    color: hsl(var(--profit));
+  /* Simple layout utilities */
+  .container-simple {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  .loss-text {
-    color: hsl(var(--loss));
+  .section-simple {
+    @apply py-12 sm:py-16 lg:py-20;
   }
   
-  .motivation-text {
-    color: hsl(var(--motivation));
+  .grid-simple {
+    @apply grid gap-6;
   }
   
-  .neutral-text {
-    @apply text-muted-foreground;
+  .grid-2 {
+    @apply grid-simple sm:grid-cols-2;
   }
   
-  /* Typography with wealth focus */
-  .heading-primary {
-    @apply text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight;
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--wealth)), hsl(var(--opportunity)));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .grid-3 {
+    @apply grid-simple sm:grid-cols-2 lg:grid-cols-3;
   }
   
-  .heading-secondary {
-    @apply text-2xl sm:text-3xl font-semibold tracking-tight text-foreground;
+  .grid-4 {
+    @apply grid-simple sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
   }
   
-  .wealth-heading {
-    background: linear-gradient(135deg, hsl(var(--wealth)), hsl(var(--opportunity)));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  /* Simple text styles */
+  .text-heading {
+    @apply text-3xl font-bold tracking-tight sm:text-4xl;
   }
   
-  .text-financial {
-    @apply font-mono text-lg font-semibold tabular-nums;
+  .text-subheading {
+    @apply text-xl font-semibold tracking-tight sm:text-2xl;
   }
   
-  /* Animation utilities */
+  .text-large {
+    @apply text-lg text-muted-foreground;
+  }
+  
+  .text-small {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  /* Simple spacing */
+  .space-simple {
+    @apply space-y-6;
+  }
+  
+  .space-tight {
+    @apply space-y-4;
+  }
+  
+  .space-loose {
+    @apply space-y-8;
+  }
+  
+  /* Success/Error states */
+  .text-success {
+    color: hsl(var(--success));
+  }
+  
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+  
+  .bg-success {
+    background-color: hsl(var(--success));
+  }
+  
+  .bg-warning {
+    background-color: hsl(var(--warning));
+  }
+  
+  /* Simple animations */
   .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-  
-  .slide-up {
-    animation: slideUp 0.3s ease-out;
-  }
-  
-  .wealth-pulse {
-    animation: wealthPulse 2s ease-in-out infinite;
+    animation: fadeIn 0.3s ease-in-out;
   }
   
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   
-  @keyframes slideUp {
-    from { 
-      opacity: 0; 
-      transform: translateY(20px); 
-    }
-    to { 
-      opacity: 1; 
-      transform: translateY(0); 
-    }
+  /* Simple table styles */
+  .table-simple {
+    @apply w-full border-collapse;
   }
   
-  @keyframes wealthPulse {
-    0%, 100% { 
-      box-shadow: 0 0 0 0 hsl(var(--wealth) / 0.4);
-    }
-    50% { 
-      box-shadow: 0 0 0 10px hsl(var(--wealth) / 0);
-    }
+  .table-simple th {
+    @apply border-b border-border px-4 py-3 text-left text-sm font-medium text-muted-foreground;
   }
   
-  /* Enhanced focus states */
-  .focus-enhanced:focus-visible {
-    @apply ring-2 ring-primary ring-offset-2 ring-offset-background outline-none;
+  .table-simple td {
+    @apply border-b border-border px-4 py-3 text-sm;
   }
   
-  /* Financial data table styles */
-  .financial-table {
-    @apply w-full border-collapse rounded-xl overflow-hidden;
+  .table-simple tr:hover {
+    @apply bg-muted/50;
   }
   
-  .financial-table th {
-    @apply bg-gradient-to-r from-muted/50 to-muted/30 font-semibold text-left p-4 border-b border-border/30 text-sm;
+  /* Simple form styles */
+  .form-group {
+    @apply space-y-2;
   }
   
-  .financial-table td {
-    @apply p-4 border-b border-border/20 text-sm;
+  .form-label {
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
   }
   
-  .financial-table tr:hover {
-    @apply bg-muted/20;
+  .form-description {
+    @apply text-sm text-muted-foreground;
   }
   
-  .financial-table tr:last-child td {
-    @apply border-b-0;
-  }
-  
-  /* Wealth tip boxes */
-  .wealth-tip {
-    @apply relative overflow-hidden rounded-xl border border-emerald-200/50 dark:border-emerald-800/30 bg-gradient-to-r from-emerald-50/50 to-amber-50/30 dark:from-emerald-950/20 dark:to-amber-950/10 p-6 shadow-sm;
-  }
-  
-  .wealth-tip::before {
-    content: '';
-    @apply absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-amber-500;
-  }
-  
-  .motivation-tip {
-    @apply relative overflow-hidden rounded-xl border border-amber-200/50 dark:border-amber-800/30 bg-gradient-to-r from-amber-50/50 to-emerald-50/30 dark:from-amber-950/20 dark:to-emerald-950/10 p-6 shadow-sm;
-  }
-  
-  .motivation-tip::before {
-    content: '';
-    @apply absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-emerald-500;
-  }
-  
-  /* Calculator grid with enhanced cards */
-  .calculator-grid {
-    @apply grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
-  }
-  
-  /* Enhanced badges */
-  .growth-indicator {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-500/10 to-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30 shadow-sm;
-  }
-
-  .opportunity-badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-amber-500/10 to-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/30 shadow-sm;
-  }
-  
-  /* Loading states */
-  .loading-shimmer {
-    background: linear-gradient(90deg, transparent, hsl(var(--wealth))/0.1, transparent);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  .form-error {
+    @apply text-sm font-medium text-destructive;
   }
 }
 
-/* Custom number input styling */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
+/* Remove number input arrows */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Responsive typography */
-@media (max-width: 640px) {
-  .heading-primary {
-    @apply text-2xl;
-  }
-  
-  .heading-secondary {
-    @apply text-xl;
-  }
+input[type="number"] {
+  -moz-appearance: textfield;
 }

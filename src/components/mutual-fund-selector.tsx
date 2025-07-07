@@ -1,17 +1,10 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import { Search, TrendingUp, Building2, Calendar, ArrowUpRight, Loader2, RefreshCw, Star } from 'lucide-react';
+import { Search, TrendingUp, Building2, Calendar, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { fetchAMFIData, searchMutualFunds, type MutualFund } from '@/lib/mutual-funds';
 import { useCurrency } from '@/contexts/currency-context';
@@ -72,132 +65,111 @@ export default function MutualFundSelector({
 
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
-      case 'large cap': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800';
-      case 'mid cap': return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800';
-      case 'small cap': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800';
-      case 'flexi cap': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800';
-      case 'index fund': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400 border-gray-200 dark:border-gray-800';
+      case 'large cap': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'mid cap': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'small cap': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      case 'flexi cap': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'index fund': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
     }
   };
 
   if (isLoading) {
     return (
-      <div className="premium-card">
-        <CardHeader className="form-section-header">
-          <div className="form-section-icon">
-            <TrendingUp className="h-6 w-6 wealth-text" />
-          </div>
-          <div className="form-section-title">
-            <CardTitle className="wealth-heading">Loading Mutual Funds</CardTitle>
-            <CardDescription>Fetching latest NAV data from AMFI...</CardDescription>
-          </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            Loading Mutual Funds
+          </CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center py-12">
-          <div className="flex items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin wealth-text" />
-            <div className="space-y-2">
-              <p className="font-medium text-foreground">Loading fund data...</p>
-              <p className="text-sm text-muted-foreground">This may take a few moments</p>
-            </div>
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-3">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Fetching latest data...</span>
           </div>
         </CardContent>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-simple">
       {/* Selected Fund Display */}
       {selectedFund ? (
-        <div className="wealth-card">
-          <CardHeader className="form-section-header">
-            <div className="form-section-icon">
-              <Star className="h-6 w-6 wealth-text" />
+        <Card>
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle>Selected Fund</CardTitle>
+                <CardDescription>Using historical performance for calculations</CardDescription>
+              </div>
+              <Button variant="outline" onClick={() => onFundSelect(null)}>
+                Change Fund
+              </Button>
             </div>
-            <div className="form-section-title flex-1">
-              <CardTitle className="wealth-heading">Selected Mutual Fund</CardTitle>
-              <CardDescription>
-                Using historical performance for expected returns calculation
-              </CardDescription>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => onFundSelect(null)}
-              className="btn-secondary"
-            >
-              Change Fund
-            </Button>
           </CardHeader>
           
-          <CardContent className="space-y-8">
-            {/* Fund Details */}
-            <div className="space-y-6">
+          <CardContent className="space-simple">
+            <div className="space-tight">
               <div className="flex items-start justify-between">
-                <div className="space-y-3 flex-1">
-                  <h4 className="text-xl font-bold text-foreground leading-tight">
-                    {selectedFund.schemeName}
-                  </h4>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-lg">{selectedFund.schemeName}</h4>
+                  <div className="flex items-center gap-4 text-small mt-2">
+                    <div className="flex items-center gap-1">
                       <Building2 className="h-4 w-4" />
                       <span>{selectedFund.fundHouse}</span>
                     </div>
-                    <div className="w-1 h-1 rounded-full bg-muted-foreground"></div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
                       <span>{new Date(selectedFund.navDate).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
-                <Badge className={`${getCategoryColor(selectedFund.category)} border font-medium px-3 py-1`}>
+                <Badge className={getCategoryColor(selectedFund.category)}>
                   {selectedFund.category}
                 </Badge>
               </div>
               
-              {/* NAV Information */}
-              <div className="stats-card">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground font-medium">Current NAV</p>
-                    <p className="text-2xl font-bold wealth-text">
-                      {selectedCurrencySymbol}{selectedFund.nav.toFixed(2)}
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground font-medium">NAV Date</p>
-                    <p className="text-lg font-semibold text-foreground">
-                      {new Date(selectedFund.navDate).toLocaleDateString()}
-                    </p>
-                  </div>
+              <div className="grid grid-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-small">Current NAV</p>
+                  <p className="text-xl font-bold text-success">
+                    {selectedCurrencySymbol}{selectedFund.nav.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-small">NAV Date</p>
+                  <p className="font-medium">
+                    {new Date(selectedFund.navDate).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
 
-              {/* Historical Returns */}
               {selectedFund.historicalCAGR && (
-                <div className="space-y-4">
-                  <h5 className="text-lg font-semibold text-foreground">Historical Returns (CAGR)</h5>
-                  <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <h5 className="font-medium mb-3">Historical Returns (CAGR)</h5>
+                  <div className="grid grid-3 gap-3">
                     {selectedFund.historicalCAGR.oneYear && (
-                      <div className="metric-card text-center">
-                        <p className="text-sm text-muted-foreground font-medium mb-2">1 Year</p>
-                        <p className="text-2xl font-bold wealth-text">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-small">1 Year</p>
+                        <p className="text-lg font-bold text-success">
                           {selectedFund.historicalCAGR.oneYear.toFixed(1)}%
                         </p>
                       </div>
                     )}
                     {selectedFund.historicalCAGR.threeYear && (
-                      <div className="metric-card text-center">
-                        <p className="text-sm text-muted-foreground font-medium mb-2">3 Years</p>
-                        <p className="text-2xl font-bold opportunity-text">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-small">3 Years</p>
+                        <p className="text-lg font-bold text-warning">
                           {selectedFund.historicalCAGR.threeYear.toFixed(1)}%
                         </p>
                       </div>
                     )}
                     {selectedFund.historicalCAGR.fiveYear && (
-                      <div className="metric-card text-center">
-                        <p className="text-sm text-muted-foreground font-medium mb-2">5 Years</p>
-                        <p className="text-2xl font-bold text-primary">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-small">5 Years</p>
+                        <p className="text-lg font-bold text-primary">
                           {selectedFund.historicalCAGR.fiveYear.toFixed(1)}%
                         </p>
                       </div>
@@ -206,20 +178,17 @@ export default function MutualFundSelector({
                 </div>
               )}
 
-              {/* Expected Return Input */}
-              <div className="space-y-4">
-                <label className="text-lg font-semibold text-foreground">
-                  Expected Annual Return (%)
-                </label>
-                <div className="flex items-center gap-4">
+              <div className="form-group">
+                <label className="form-label">Expected Annual Return (%)</label>
+                <div className="flex gap-2">
                   <Input
                     type="number"
                     value={expectedReturn}
                     onChange={(e) => onExpectedReturnChange(Number(e.target.value))}
-                    className="enhanced-input flex-1"
                     step="0.1"
                     min="0"
                     max="50"
+                    className="flex-1"
                   />
                   <Button
                     variant="outline"
@@ -227,110 +196,97 @@ export default function MutualFundSelector({
                       const defaultReturn = selectedFund.historicalCAGR?.threeYear || 12;
                       onExpectedReturnChange(defaultReturn);
                     }}
-                    className="btn-secondary whitespace-nowrap"
                   >
-                    Use 3Y CAGR
+                    Use 3Y
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Based on {selectedFund.historicalCAGR?.threeYear ? '3-year' : 'estimated'} historical performance
+                <p className="form-description">
+                  Based on historical performance data
                 </p>
               </div>
             </div>
           </CardContent>
-        </div>
+        </Card>
       ) : (
         /* Fund Selection Interface */
-        <div className="premium-card">
-          <CardHeader className="form-section-header">
-            <div className="form-section-icon">
-              <TrendingUp className="h-6 w-6 text-primary" />
+        <Card>
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle>Select Mutual Fund</CardTitle>
+                <CardDescription>
+                  Choose a fund to use its historical returns
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => loadFunds(true)}
+                disabled={isRefreshing}
+              >
+                {isRefreshing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                Refresh
+              </Button>
             </div>
-            <div className="form-section-title flex-1">
-              <CardTitle>Select Mutual Fund</CardTitle>
-              <CardDescription>
-                Choose a fund to use its historical returns as default expected return
-              </CardDescription>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => loadFunds(true)}
-              disabled={isRefreshing}
-              className="btn-secondary"
-            >
-              {isRefreshing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="h-4 w-4" />
-              )}
-              Refresh
-            </Button>
           </CardHeader>
           
-          <CardContent className="space-y-6">
-            {/* Search */}
+          <CardContent className="space-simple">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search funds by name, fund house, or category..."
+                placeholder="Search funds..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="enhanced-input pl-12"
+                className="pl-10"
               />
             </div>
 
-            {/* Fund List */}
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-2 max-h-80 overflow-y-auto">
               {filteredFunds.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium">No funds found</p>
-                  <p className="text-sm">Try adjusting your search criteria</p>
+                <div className="text-center py-8">
+                  <TrendingUp className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                  <p>No funds found</p>
                 </div>
               ) : (
                 filteredFunds.slice(0, 20).map((fund) => (
                   <div
                     key={fund.schemeCode}
-                    className="fund-card cursor-pointer p-6"
+                    className="simple-card p-4 cursor-pointer"
                     onClick={() => handleFundSelect(fund)}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="space-y-3 flex-1">
-                        <div className="flex items-start gap-3">
-                          <h4 className="font-semibold text-foreground leading-tight text-base flex-1">
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-start gap-2">
+                          <h4 className="font-medium text-sm leading-tight flex-1">
                             {fund.schemeName}
                           </h4>
-                          <Badge className={`${getCategoryColor(fund.category)} border font-medium px-2 py-1 text-xs`}>
+                          <Badge className={`${getCategoryColor(fund.category)} text-xs`}>
                             {fund.category}
                           </Badge>
                         </div>
                         
-                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4" />
-                            <span>{fund.fundHouse}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>{new Date(fund.navDate).toLocaleDateString()}</span>
-                          </div>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>{fund.fundHouse}</span>
+                          <span>{new Date(fund.navDate).toLocaleDateString()}</span>
                         </div>
                         
                         {fund.historicalCAGR?.threeYear && (
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm text-muted-foreground">3Y CAGR:</span>
-                            <span className="text-base font-bold wealth-text">
+                          <div className="text-xs">
+                            <span className="text-muted-foreground">3Y CAGR: </span>
+                            <span className="font-medium text-success">
                               {fund.historicalCAGR.threeYear.toFixed(1)}%
                             </span>
                           </div>
                         )}
                       </div>
                       
-                      <div className="text-right space-y-2 ml-4">
-                        <p className="text-lg font-bold text-foreground">
+                      <div className="text-right ml-4">
+                        <p className="font-medium">
                           {selectedCurrencySymbol}{fund.nav.toFixed(2)}
                         </p>
-                        <ArrowUpRight className="h-5 w-5 text-muted-foreground ml-auto" />
                       </div>
                     </div>
                   </div>
@@ -339,12 +295,12 @@ export default function MutualFundSelector({
             </div>
 
             {lastUpdated && (
-              <p className="text-xs text-muted-foreground text-center pt-4 border-t border-border/30">
-                Data last updated: {new Date(lastUpdated).toLocaleString()}
+              <p className="text-xs text-muted-foreground text-center">
+                Last updated: {new Date(lastUpdated).toLocaleString()}
               </p>
             )}
           </CardContent>
-        </div>
+        </Card>
       )}
     </div>
   );
