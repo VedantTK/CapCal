@@ -162,7 +162,7 @@
   }
   
   .calculator-card {
-    @apply relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-white via-white to-slate-50/50 dark:from-card dark:via-card dark:to-slate-950/20 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group;
+    @apply relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-white via-white to-slate-50/50 dark:from-card dark:via-card dark:to-slate-950/20 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1;
   }
   
   .calculator-card::before {
